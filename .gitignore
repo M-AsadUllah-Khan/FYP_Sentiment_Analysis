@@ -1,0 +1,14 @@
+# Python Virtual Environment
+env/
+.env
+
+# Python Cache Files
+__pycache__/
+*.pyc
+*/__pycache__/
+
+# Databases & Local User Data (Very Important to hide)
+*.db
+backend/*.db
+frontend/*.db
+frontend/users_db.json

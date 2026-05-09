@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================
+   1. GLOBAL STREAMLIT OVERRIDES
+========================================== */
+.stApp {
+    background-color: #f8fafc;
+    /* Professional Light Grey */
+    font-family: 'Inter', -apple-system, sans-serif;
+}
+
+/* Hide default Streamlit elements to make it look like a custom web app */
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header {
+    visibility: hidden;
+}
+
+/* Prevent main content from hiding behind our custom fixed footer */
+.block-container {
+    padding-top: 2rem !important;
+    padding-bottom: 100px !important;
+}
+
+/* Customizing Horizontal Lines (Dividers) */
+hr {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* ==========================================
+   2. AUTHENTICATION UI TYPOGRAPHY
+========================================== */
+.auth-title {
+    color: #0f172a;
+    font-size: 28px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 5px;
+    letter-spacing: -0.5px;
+}
+
+.auth-subtitle {
+    color: #64748b;
+    font-size: 15px;
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+/* ==========================================
+   3. INPUT FIELDS & BUTTONS (Forms)
+========================================== */
+/* Label Styling */
+div[data-testid="stTextInput"] label p {
+    color: #334155;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Text Input Box Styling */
+.stTextInput input {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    border-radius: 8px !important;
+    padding: 12px 16px !important;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Input Focus Glow Effect */
+.stTextInput input:focus {
+    border-color: #4f46e5 !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
+}
+
+/* Primary Button (Indigo) */
+button[kind="primary"] {
+    background-color: #4f46e5 !important;
+    color: white !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    padding: 10px !important;
+    transition: background-color 0.3s ease;
+    border: none !important;
+}
+
+button[kind="primary"]:hover {
+    background-color: #4338ca !important;
+}
+
+/* Secondary Buttons (Outlined) */
+button[kind="secondary"] {
+    background-color: transparent !important;
+    color: #475569 !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease;
+}
+
+button[kind="secondary"]:hover {
+    border-color: #94a3b8 !important;
+    color: #0f172a !important;
+    background-color: #f1f5f9 !important;
+}
+
+/* ==========================================
+   4. ENTERPRISE FIXED FOOTER
+========================================== */
+.saas-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 16px 40px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 9999;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.03);
+}
+
+/* Left side of footer */
+.footer-left {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.architect-name {
+    color: #4f46e5;
+    font-weight: 700;
+}
+
+/* Right side of footer */
+.footer-right {
+    color: #94a3b8;
+    font-size: 13px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+/* System Status (Green Dot Animation) */
+.status-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #334155;
+    font-weight: 600;
+}
+
+.status-dot {
+    color: #10b981;
+    font-size: 11px;
+    animation: blinker 2.5s ease-in-out infinite;
+}
+
+@keyframes blinker {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* ==========================================
+   5. DASHBOARD METRICS TYPOGRAPHY
+========================================== */
+/* Metrics Values (e.g., Sentiment Score) */
+div[data-testid="stMetricValue"] {
+    color: #0f172a;
+    font-weight: 800;
+    font-family: 'Inter', sans-serif;
+}
