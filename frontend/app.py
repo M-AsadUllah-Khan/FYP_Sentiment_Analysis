@@ -3,11 +3,15 @@ from auth_system import render_auth_ui
 from dashboards import render_user_dashboard
 from intro_page import render_intro_page
 from auth_system import check_persistent_login
+from layout import show_neural_loader
+
+# Screen Loader
+show_neural_loader() 
 
 check_persistent_login()
 
 # ==========================================
-st.set_page_config(page_title="FYP | Sentiment Analysis", page_icon="📊", layout="wide")
+st.set_page_config(page_title="E-Commerce Sentiment Analyzer", page_icon="📊", layout="wide")
 
 # ==========================================
 # 2. SESSION STATE & DYNAMIC DATA INIT

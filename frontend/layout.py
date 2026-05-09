@@ -1,5 +1,6 @@
 import streamlit as st
 import datetime
+import time
 
 
 def inject_global_styles():
@@ -35,7 +36,7 @@ def inject_global_styles():
             button[kind="primary"], div[data-testid="stForm"] button {{ background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%) !important; color: white !important; border: none !important; box-shadow: 0 4px 15px rgba(59,130,246,0.3) !important; }}
             button[kind="primary"]:hover, div[data-testid="stForm"] button:hover {{ box-shadow: 0 8px 25px rgba(59,130,246,0.6) !important; }}
             
-            /* --- RESTORED CYBER HEADER --- */
+            /* --- CYBER HEADER --- */
             .cyber-header {{ background: {card_bg}; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid {border}; border-radius: 15px; padding: 20px; position: relative; overflow: hidden; animation: float 6s ease-in-out infinite; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15); z-index: 3; }}
             .cyber-header::before {{ content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, #6366f1, #0ea5e9, #6366f1, transparent); animation: cyber-scan 3.5s infinite; }}
             @keyframes cyber-scan {{ 0% {{ top: -10%; }} 100% {{ top: 110%; }} }}
@@ -152,7 +153,7 @@ def render_header():
 
 
 def render_footer():
-    # <-- NEW: Dynamic Year Generation -->
+    # <-- Dynamic Year Generation -->
     current_year = datetime.datetime.now().year
 
     html = f"""
@@ -178,3 +179,80 @@ def render_footer():
     </div>
     """
     st.markdown(html, unsafe_allow_html=True)
+
+# screen loader
+
+def show_neural_loader():
+    if 'app_loaded' not in st.session_state:
+        loader_html = """
+        <div id="loader-container">
+            <div class="loader-spinner"></div>
+            <div class="loader-title">E-COMMERCE SENTIMENTS ANALYSIS SYSTEM</div>
+            <div class="loader-status">POWERED BY MAU APEX-STUDIO...</div>
+        </div>
+
+        <style>
+            #loader-container {
+                position: fixed;
+                top: 0; left: 0; width: 100vw; height: 100vh;
+                background-color: #0f172a;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 999999;
+                animation: fadeOutLoader 3.5s ease-in-out forwards;
+                pointer-events: none; 
+            }
+
+            .loader-spinner {
+                width: 70px;
+                height: 70px;
+                border: 4px solid rgba(59, 130, 246, 0.15);
+                border-top-color: #3b82f6;
+                border-bottom-color: #8b5cf6;
+                border-radius: 50%;
+                animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+                margin-bottom: 30px;
+                box-shadow: 0 0 25px rgba(59, 130, 246, 0.3);
+            }
+
+            .loader-title {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 24px;
+                font-weight: 900;
+                letter-spacing: 2.5px;
+                text-align: center;
+                text-transform: uppercase;
+                background: linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6);
+                background-size: 200% auto;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                animation: shine 3s linear infinite;
+                margin-bottom: 15px;
+                padding: 0 20px;
+            }
+
+            .loader-status {
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 13px;
+                color: #94a3b8;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                animation: pulse 1.5s ease-in-out infinite;
+            }
+
+            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; text-shadow: 0 0 8px rgba(148, 163, 184, 0.6); } }
+            @keyframes shine { to { background-position: 200% center; } }
+            
+            @keyframes fadeOutLoader {
+                0% { opacity: 1; visibility: visible; }
+                80% { opacity: 1; visibility: visible; }
+                100% { opacity: 0; visibility: hidden; z-index: -10; display: none; }
+            }
+        </style>
+        """
+        
+        st.markdown(loader_html, unsafe_allow_html=True)
+        st.session_state['app_loaded'] = True

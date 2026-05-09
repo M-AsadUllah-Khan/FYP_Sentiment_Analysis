@@ -12,13 +12,12 @@ def render_intro_page():
             .intro-hero { padding: 20px 0 20px 0; z-index: 3; position: relative; display: flex; flex-direction: column; align-items: center; }
             .hero-title { font-size: 3.5rem; font-weight: 900; text-align: center; width: 100%; margin-bottom: 15px; }
             
-            /* --- PROFILE IMAGE CUSTOM CSS (No Streamlit Button Possible Here) --- */
             .profile-img {
                 width: 100%;
                 border-radius: 20px;
                 box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
                 border: 2px solid rgba(59, 130, 246, 0.6);
-                pointer-events: none; /* Mouse hover ko completely disable kar diya */
+                pointer-events: none;
             }
             
             .skill-text { font-size: 13px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; color: #3b82f6; }
@@ -33,14 +32,13 @@ def render_intro_page():
             .contact-card { background: rgba(128, 128, 128, 0.05); border-left: 3px solid #3b82f6; padding: 20px; border-radius: 0 15px 15px 0; margin-top: 10px; }
             .contact-item { font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; opacity: 0.9; }
 
-            /* --- CARDS HEIGHT FIXED TO BE EXACTLY EQUAL --- */
             .feature-card {
                 background: rgba(128, 128, 128, 0.05);
                 border: 1px solid rgba(59, 130, 246, 0.2);
                 border-radius: 15px;
                 padding: 20px;
                 margin-bottom: 20px;
-                height: 210px; /* FIXED HEIGHT */
+                height: 210px;
                 display: flex;
                 flex-direction: column;
                 transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -132,7 +130,7 @@ def render_intro_page():
         st.markdown(f"""
             <h1 style='margin-bottom:0px; color:var(--text-color);'>Muhammad Asad Ullah</h1>
             <p style='color:#3b82f6; font-weight:600; font-size:18px; margin-top:5px;'>Bachelor of Science in Computer Science (GCUF)</p>
-            <div style='margin-bottom:20px; font-style:italic; opacity:0.8;'>Leading Web Developer | AI Driven Engineer</div>
+            <div style='margin-bottom:20px; font-style:italic; opacity:0.8;'>Leading Web Developer | AI-Driven Engineer</div>
             
             <div class='contact-card'>
                 <div class='contact-item'>📧 <b>Email:</b> asaddevpk@gmail.com</div>
