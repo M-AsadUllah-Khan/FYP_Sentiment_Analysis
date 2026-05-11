@@ -102,7 +102,7 @@ def render_header():
                 <div style='display: flex; align-items: center;'>
                     <div class='neural-core'></div>
                     <div>
-                        <h2 class='glow-text'>E-COMMERCE SENTIMENTS ANALYSIS SYSTEM</br>POWERED BY MAU APEX-STUDIO</h2>
+                        <h2 class='glow-text'>AI SENTIMENTS ANALYSIS SYSTEM</br>POWERED BY MAU APEX-STUDIO</h2>
                         <p style='margin:0; font-size:12px; opacity:0.8;'>BS CS Final Year Project Architecture | GOVT. GRADUATE COLLEGE GOJRA</p>
                     </div>
                 </div>
@@ -164,7 +164,7 @@ def render_footer():
                 <span class='anim-core'><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
                     <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-                    </svg></span><span style='opacity: 0.9;'>E-COMMERECE SENTIMENTS ANALYZER&nbsp;&nbsp;|
+                    </svg></span><span style='opacity: 0.9;'>AI SENTIMENTS ANALYSIS SYSTEM&nbsp;&nbsp;|
                 </span>
                 <span style='opacity: 0.9;'>&nbsp;&nbsp;DEVELOPED BY : </span><span class='anim-dev'>👨‍💻 </span> 
                 <span class='dev-name'> MUHAMMAD ASAD ULLAH</span>
@@ -187,7 +187,7 @@ def show_neural_loader():
         loader_html = """
         <div id="loader-container">
             <div class="loader-spinner"></div>
-            <div class="loader-title">E-COMMERCE SENTIMENTS ANALYSIS SYSTEM</div>
+            <div class="loader-title">AI SENTIMENTS ANALYSIS SYSTEM</div>
             <div class="loader-status">POWERED BY MAU APEX-STUDIO...</div>
         </div>
 

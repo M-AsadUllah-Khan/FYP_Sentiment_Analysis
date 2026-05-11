@@ -1,5 +1,5 @@
 import streamlit as st
-import sqlite3
+import psycopg2
 import pandas as pd
 import time
 import sys
@@ -14,9 +14,9 @@ except ModuleNotFoundError:
 
 # --- DB FETCH LOGIC ---
 def get_user_usage(email):
-    conn = sqlite3.connect('fyp_database.db')
+    conn = psycopg2.connect(st.secrets["DB_URL"])
     c = conn.cursor()
-    c.execute('SELECT total, positive, negative, neutral FROM usage WHERE email=?', (email,))
+    c.execute('SELECT total, positive, negative, neutral FROM usage WHERE email=%s', (email,))
     data = c.fetchone()
     conn.close()
     return data if data else (0, 0, 0, 0)
@@ -29,10 +29,10 @@ def update_user_usage_and_history(email, text, result):
     elif result == "NEGATIVE": neg += 1
     else: neu += 1
     
-    conn = sqlite3.connect('fyp_database.db')
+    conn = psycopg2.connect(st.secrets["DB_URL"])
     c = conn.cursor()
-    c.execute('UPDATE usage SET total=?, positive=?, negative=?, neutral=? WHERE email=?', (tot, pos, neg, neu, email))
-    c.execute('INSERT INTO history (email, review, sentiment) VALUES (?, ?, ?)', (email, text, result))
+    c.execute('UPDATE usage SET total=%s, positive=%s, negative=%s, neutral=%s WHERE email=%s', (tot, pos, neg, neu, email))
+    c.execute('INSERT INTO history (email, review, sentiment) VALUES (%s, %s, %s)', (email, text, result))
     conn.commit()
     conn.close()
 
@@ -42,7 +42,7 @@ def render_performance_and_manual():
     tot, pos, neg, neu = get_user_usage(user_email)
 
     # 1. Performance Metrics Section
-    st.markdown(f"### System Telemetry (Live DB: {user_email})")
+    st.markdown(f"### System Telemetry")
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Total Analysed", str(tot))
     m2.metric("Positive", f"{round((pos/tot)*100,1)}%" if tot > 0 else "0%")
@@ -64,8 +64,8 @@ def render_performance_and_manual():
     
     if st.button("Run Model", type="primary"):
         if user_input:
-            with st.spinner("Analysing with Neural Engine (VADER)..."): 
-                time.sleep(0.5) # Thora delay taake realistic feel aaye
+            with st.spinner("Data Analysing..."): 
+                time.sleep(0.5) 
             
             # --- CALLING YOUR REAL NLP ENGINE ---
             category, compound, raw_scores = analyze_sentiment(user_input)

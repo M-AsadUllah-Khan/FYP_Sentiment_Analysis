@@ -24,4 +24,4 @@ def render_comparison_tab():
                 st.bar_chart(comp_df.set_index("Product"))
                 
                 winner = prod_a if data["Positive Score"][0] > data["Positive Score"][1] else prod_b
-                st.success(f"🏆 Based on VADER analysis, **{winner}** has better sentiment markers.")
+                st.success(f"🏆 Based on System Analysis, **{winner}** has better sentiment markers.")

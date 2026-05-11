@@ -11,7 +11,7 @@ show_neural_loader()
 check_persistent_login()
 
 # ==========================================
-st.set_page_config(page_title="E-Commerce Sentiment Analyzer", page_icon="📊", layout="wide")
+st.set_page_config(page_title="AI Sentiments Analyzer", page_icon="📊", layout="wide")
 
 # ==========================================
 # 2. SESSION STATE & DYNAMIC DATA INIT

@@ -1,10 +1,14 @@
 import streamlit as st
-import sqlite3
+import psycopg2
 import pandas as pd
 
 def get_user_history(email):
-    conn = sqlite3.connect('fyp_database.db')
-    df = pd.read_sql_query("SELECT review as 'Review Text', sentiment as 'Prediction', timestamp as 'Date/Time' FROM history WHERE email=? ORDER BY timestamp DESC", conn, params=(email,))
+    conn = psycopg2.connect(st.secrets["DB_URL"])
+    
+    # YAHAN CHANGE KIYA HAI: Outer quotes ko single (') kar diya aur andar column names ko double (") kar diya
+    query = 'SELECT review as "Review Text", sentiment as "Prediction", timestamp as "Date/Time" FROM history WHERE email=%s ORDER BY timestamp DESC'
+    
+    df = pd.read_sql_query(query, conn, params=(email,))
     conn.close()
     return df
 

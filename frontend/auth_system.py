@@ -1,25 +1,53 @@
 import streamlit as st
-import sqlite3
+import psycopg2
 import time
-import re  # ADDED: For password validation
+import re
+import random
+import smtplib
+from email.mime.text import MIMEText
 from layout import render_header, render_footer
 
+DB_URL = st.secrets["DB_URL"]
+SENDER_EMAIL = st.secrets["SENDER_EMAIL"]
+APP_PASSWORD = st.secrets["APP_PASSWORD"]
+
+# SPEED OPTIMIZATION
+@st.cache_resource
 def init_db():
-    conn = sqlite3.connect('fyp_database.db')
-    c = conn.cursor()
-    c.execute('CREATE TABLE IF NOT EXISTS users (email TEXT UNIQUE, first_name TEXT, last_name TEXT, password TEXT)')
-    c.execute('CREATE TABLE IF NOT EXISTS usage (email TEXT UNIQUE, total INTEGER, positive INTEGER, negative INTEGER, neutral INTEGER)')
-    c.execute('CREATE TABLE IF NOT EXISTS history (email TEXT, review TEXT, sentiment TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)')
-    conn.commit()
-    conn.close()
+    try:
+        conn = psycopg2.connect(DB_URL)
+        c = conn.cursor()
+        c.execute('CREATE TABLE IF NOT EXISTS users (email TEXT UNIQUE, first_name TEXT, last_name TEXT, password TEXT)')
+        c.execute('CREATE TABLE IF NOT EXISTS usage (email TEXT UNIQUE, total INTEGER, positive INTEGER, negative INTEGER, neutral INTEGER)')
+        c.execute('CREATE TABLE IF NOT EXISTS history (email TEXT, review TEXT, sentiment TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)')
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        st.error(f"Database Init Error: {e}")
+
+def send_otp_email(receiver_email, otp_code, purpose="Registration"):
+    try:
+        msg = MIMEText(f"""Your OTP for Secure Access Portal {purpose} is: <span style="text-align:center;font-weight:800px;font-size:16px;">{otp_code}</span>\n\nPlease enter this code to verify your action.""")
+        msg['Subject'] = f'{purpose} OTP - AI Sentiments Analysis System'
+        msg['From'] = SENDER_EMAIL
+        msg['To'] = receiver_email
+
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(SENDER_EMAIL, APP_PASSWORD)
+        server.send_message(msg)
+        server.quit()
+        return True
+    except Exception as e:
+        print("Email Error:", e)
+        return False
 
 def check_persistent_login():
     if not st.session_state.get('logged_in', False):
         if 'auth_email' in st.query_params:
             email = st.query_params['auth_email']
-            conn = sqlite3.connect('fyp_database.db')
+            conn = psycopg2.connect(DB_URL)
             c = conn.cursor()
-            c.execute('SELECT * FROM users WHERE email=?', (email,))
+            c.execute('SELECT * FROM users WHERE email=%s', (email,))
             user = c.fetchone()
             conn.close()
             if user:
@@ -35,15 +63,29 @@ def render_auth_ui():
         st.session_state['page'] = 'dashboard'
         st.rerun()
 
+    # Registration OTP States
+    if 'otp_step' not in st.session_state: st.session_state['otp_step'] = False
+    if 'temp_user_data' not in st.session_state: st.session_state['temp_user_data'] = None
+    if 'generated_otp' not in st.session_state: st.session_state['generated_otp'] = None
+    
+    # Recovery OTP States
+    if 'rec_step' not in st.session_state: st.session_state['rec_step'] = 'start' # start, otp, reset
+    if 'rec_email' not in st.session_state: st.session_state['rec_email'] = None
+    if 'rec_otp' not in st.session_state: st.session_state['rec_otp'] = None
+
     render_header()
-    init_db()
+    init_db() 
     
     col1, col2, col3 = st.columns([2.5, 5, 2.5])
     
     with col2:
         st.markdown("<h2 style='text-align: center; margin-bottom: 20px;'>🔐 Secure Access Portal</h2>", unsafe_allow_html=True)
-        t1, t2 = st.tabs(["🔑 Login", "📝 Register"])
+        
+        t1, t2, t3 = st.tabs(["🔑 Login", "📝 Register", "🔄 Recover"])
 
+        # ==========================================
+        # TAB 1: LOGIN FLOW
+        # ==========================================
         with t1:
             with st.form("login_form"):
                 email_login = st.text_input("Email *")
@@ -53,14 +95,13 @@ def render_auth_ui():
                     if not email_login or not p:
                         st.warning("⚠️ Both Email and Password are required.")
                     else:
-                        conn = sqlite3.connect('fyp_database.db')
+                        conn = psycopg2.connect(DB_URL)
                         c = conn.cursor()
-                        c.execute('SELECT * FROM users WHERE email=? AND password=?', (email_login, p))
+                        c.execute('SELECT * FROM users WHERE email=%s AND password=%s', (email_login, p))
                         user = c.fetchone()
                         conn.close()
                         
                         if user:
-                            with st.spinner("Establishing Secure Connection..."): time.sleep(1)
                             st.session_state['logged_in'] = True
                             st.session_state['user_email'] = user[0] 
                             st.session_state['last_name'] = user[2]
@@ -70,32 +111,158 @@ def render_auth_ui():
                         else:
                             st.error("⚠️ Incorrect Email or Password!")
 
+        # ==========================================
+        # TAB 2: REGISTER FLOW
+        # ==========================================
         with t2:
-            with st.form("register_form"):
-                fn = st.text_input("First Name *")
-                ln = st.text_input("Last Name *")
-                email_reg = st.text_input("Email *")
-                pw = st.text_input("Password *", type="password")
-                cp = st.text_input("Confirm Password *", type="password")
-                
-                if st.form_submit_button("INITIALISE PROFILE", type="primary", use_container_width=True):
-                    if not all([fn, ln, email_reg, pw, cp]):
-                        st.warning("⚠️ Please fill in all mandatory fields.")
-                    elif pw != cp:
-                        st.error("⚠️ Passwords do not match!")
-                    elif len(pw) < 8 or not re.search(r"[A-Z]", pw) or not re.search(r"[!@#$%^&*(),.?\":{}|<>]", pw):
-                        st.error("⚠️ Password must be at least 8 characters long, contain at least 1 Uppercase letter, and 1 Special character.")
-                    else:
-                        try:
-                            conn = sqlite3.connect('fyp_database.db')
+            if not st.session_state['otp_step']:
+                with st.form("register_form"):
+                    fn = st.text_input("First Name *")
+                    ln = st.text_input("Last Name *")
+                    email_reg = st.text_input("Email *")
+                    pw = st.text_input("Password *", type="password")
+                    cp = st.text_input("Confirm Password *", type="password")
+                    
+                    if st.form_submit_button("INITIALISE PROFILE", type="primary", use_container_width=True):
+                        if not all([fn, ln, email_reg, pw, cp]):
+                            st.warning("⚠️ Please fill in all mandatory fields.")
+                        elif pw != cp:
+                            st.error("⚠️ Passwords do not match!")
+                        elif len(pw) < 8 or not re.search(r"[A-Z]", pw) or not re.search(r"[!@#$%^&*(),.?\":{}|<>]", pw):
+                            st.error("⚠️ Password must be at least 8 characters long, contain at least 1 Uppercase letter, and 1 Special character.")
+                        else:
+                            conn = psycopg2.connect(DB_URL)
                             c = conn.cursor()
-                            c.execute('INSERT INTO users VALUES (?, ?, ?, ?)', (email_reg, fn, ln, pw))
-                            c.execute('INSERT INTO usage VALUES (?, 0, 0, 0, 0)', (email_reg,))
-                            conn.commit()
+                            c.execute('SELECT * FROM users WHERE email=%s', (email_reg,))
+                            existing_user = c.fetchone()
                             conn.close()
-                            st.success("✅ Profile established permanently in Database! Please switch to Login tab.")
-                        except sqlite3.IntegrityError:
-                            st.error("⚠️ This Email is already registered! Only one account per email is allowed.")
+
+                            if existing_user:
+                                st.error("⚠️ This Email is already registered! PLease register with another Email.")
+                            else:
+                                with st.spinner("Generating OTP and sending to your email..."):
+                                    otp = str(random.randint(100000, 999999))
+                                    if send_otp_email(email_reg, otp, "Registration"):
+                                        st.session_state['temp_user_data'] = (email_reg, fn, ln, pw)
+                                        st.session_state['generated_otp'] = otp
+                                        st.session_state['otp_step'] = True
+                                        st.rerun()
+                                    else:
+                                        st.error("⚠️ Failed to send OTP. Please check your network.")
+
+            else:
+                st.info(f"📧 A 6-digit OTP has been sent to **{st.session_state['temp_user_data'][0]}**")
+                with st.form("otp_form"):
+                    entered_otp = st.text_input("Enter OTP Code *", max_chars=6)
+                    col_a, col_b = st.columns(2)
+                    with col_a:
+                        verify_btn = st.form_submit_button("VERIFY & REGISTER", type="primary", use_container_width=True)
+                    with col_b:
+                        cancel_btn = st.form_submit_button("Cancel", use_container_width=True)
+
+                    if verify_btn:
+                        if entered_otp == st.session_state['generated_otp']:
+                            try:
+                                user_data = st.session_state['temp_user_data']
+                                conn = psycopg2.connect(DB_URL)
+                                c = conn.cursor()
+                                c.execute('INSERT INTO users VALUES (%s, %s, %s, %s)', user_data)
+                                c.execute('INSERT INTO usage VALUES (%s, 0, 0, 0, 0)', (user_data[0],))
+                                conn.commit()
+                                conn.close()
+                                
+                                st.session_state['otp_step'] = False
+                                st.session_state['temp_user_data'] = None
+                                st.session_state['generated_otp'] = None
+                                
+                                st.success("✅ Profile established securely! You can now log in.")
+                            except Exception as e:
+                                st.error(f"Database Error: {e}")
+                        else:
+                            st.error("⚠️ Incorrect OTP! Please try again.")
+                            
+                    if cancel_btn:
+                        st.session_state['otp_step'] = False
+                        st.session_state['temp_user_data'] = None
+                        st.session_state['generated_otp'] = None
+                        st.rerun()
+
+        # ==========================================
+        # TAB 3: RECOVER ACCOUNT FLOW
+        # ==========================================
+        with t3:
+            st.markdown("<h4 style='text-align: center; margin-bottom: 15px;'>Account Recovery</h4>", unsafe_allow_html=True)
+            
+            if st.session_state['rec_step'] == 'start':
+                with st.form("recover_email_form"):
+                    st.write("Enter your registered email to receive a recovery OTP.")
+                    rec_email_input = st.text_input("Recovery Email")
+                    submit_recover = st.form_submit_button("Send Recovery OTP", type="primary", use_container_width=True)
+                    
+                    if submit_recover:
+                        if rec_email_input:
+                            conn = psycopg2.connect(DB_URL)
+                            c = conn.cursor()
+                            c.execute('SELECT * FROM users WHERE email=%s', (rec_email_input,))
+                            existing_user = c.fetchone()
                             conn.close()
                             
+                            if existing_user:
+                                with st.spinner("Sending Recovery OTP..."):
+                                    otp = str(random.randint(100000, 999999))
+                                    if send_otp_email(rec_email_input, otp, "Account Recovery"):
+                                        st.session_state['rec_email'] = rec_email_input
+                                        st.session_state['rec_otp'] = otp
+                                        st.session_state['rec_step'] = 'otp'
+                                        st.rerun()
+                                    else:
+                                        st.error("⚠️ Failed to send OTP. Try again.")
+                            else:
+                                st.error("⚠️ Email not found in our database.")
+                        else:
+                            st.warning("Please enter your email.")
+                            
+            elif st.session_state['rec_step'] == 'otp':
+                st.info(f"📧 Recovery OTP sent to **{st.session_state['rec_email']}**")
+                with st.form("recover_otp_form"):
+                    entered_rec_otp = st.text_input("Enter 6-digit OTP", max_chars=6)
+                    col_x, col_y = st.columns(2)
+                    with col_x:
+                        verify_rec_btn = st.form_submit_button("Verify OTP", type="primary", use_container_width=True)
+                    with col_y:
+                        cancel_rec_btn = st.form_submit_button("Cancel Recovery", use_container_width=True)
+                        
+                    if verify_rec_btn:
+                        if entered_rec_otp == st.session_state['rec_otp']:
+                            st.session_state['rec_step'] = 'reset'
+                            st.rerun()
+                        else:
+                            st.error("⚠️ Incorrect OTP!")
+                            
+                    if cancel_rec_btn:
+                        st.session_state['rec_step'] = 'start'
+                        st.rerun()
+                        
+            elif st.session_state['rec_step'] == 'reset':
+                st.success("✅ Identity Verified! Set a new password.")
+                with st.form("reset_password_form"):
+                    new_pw = st.text_input("New Password *", type="password")
+                    conf_new_pw = st.text_input("Confirm New Password *", type="password")
+                    update_btn = st.form_submit_button("Update Password", type="primary", use_container_width=True)
+                    
+                    if update_btn:
+                        if new_pw != conf_new_pw:
+                            st.error("⚠️ Passwords do not match!")
+                        elif len(new_pw) < 8 or not re.search(r"[A-Z]", new_pw) or not re.search(r"[!@#$%^&*(),.?\":{}|<>]", new_pw):
+                            st.error("⚠️ Minimum 8 characters, 1 Uppercase, 1 Special character required.")
+                        else:
+                            conn = psycopg2.connect(DB_URL)
+                            c = conn.cursor()
+                            c.execute("UPDATE users SET password = %s WHERE email = %s", (new_pw, st.session_state['rec_email']))
+                            conn.commit()
+                            conn.close()
+                            
+                            st.session_state['rec_step'] = 'start'
+                            st.success("✅ Password updated successfully! Please switch to Login tab.")
+
     render_footer()

@@ -12,3 +12,4 @@ __pycache__/
 backend/*.db
 frontend/*.db
 frontend/users_db.json
+.streamlit/

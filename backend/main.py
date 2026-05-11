@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, EmailStr
-import sqlite3
+import psycopg2  # Changed from sqlite3
 import time
 import random
 import re
@@ -16,30 +16,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# YAHAN APNA NEON DB KA URL PASTE KAREIN
+DB_URL = "postgresql://user:password@ep-host.neon.tech/neondb"
+
 def init_db():
-    conn = sqlite3.connect('fyp_database.db')
+    conn = psycopg2.connect(DB_URL)
     cursor = conn.cursor()
+    # AUTOINCREMENT ki jagah SERIAL use kiya gaya hai
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             phone TEXT NOT NULL,
             role TEXT DEFAULT 'user',
-            reg_date DATETIME DEFAULT CURRENT_TIMESTAMP
+            reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS logs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             username TEXT,
             text TEXT,
             sentiment TEXT,
             polarity_score REAL,
             emotion TEXT,
             sarcasm_score REAL,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
     conn.commit()
@@ -60,23 +64,24 @@ class UserLogin(BaseModel):
 @app.post("/api/register")
 async def register(user: UserRegister):
     try:
-        conn = sqlite3.connect('fyp_database.db')
+        conn = psycopg2.connect(DB_URL)
         cursor = conn.cursor()
+        # ? ki jagah %s use kiya gaya hai
         cursor.execute(
-            "INSERT INTO users (username, password, email, phone, role) VALUES (?, ?, ?, ?, 'user')",
+            "INSERT INTO users (username, password, email, phone, role) VALUES (%s, %s, %s, %s, 'user')",
             (user.username, user.password, user.email, user.phone)
         )
         conn.commit()
         conn.close()
         return {"status": "success"}
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:  # sqlite3.IntegrityError ki jagah
         raise HTTPException(status_code=400, detail="Identity conflict")
 
 @app.post("/api/login")
 async def login(user: UserLogin):
-    conn = sqlite3.connect('fyp_database.db')
+    conn = psycopg2.connect(DB_URL)
     cursor = conn.cursor()
-    cursor.execute("SELECT username, role FROM users WHERE (username=? OR email=?) AND password=?", 
+    cursor.execute("SELECT username, role FROM users WHERE (username=%s OR email=%s) AND password=%s", 
                    (user.username, user.username, user.password))
     result = cursor.fetchone()
     conn.close()
@@ -84,14 +89,13 @@ async def login(user: UserLogin):
         return {"username": result[0], "role": result[1]}
     raise HTTPException(status_code=401, detail="Unauthorized")
 
-# --- ADVANCED NLP ALGORITHMS ---
+# --- NLP ALGORITHMS ---
 def extract_aspects(text):
-    # Simulated ABSA (Aspect-Based Sentiment Analysis)
     nouns = [word for word, pos in TextBlob(text).tags if pos.startswith('NN')]
     aspects = []
     for noun in nouns:
         if len(noun) > 2:
-            score = random.uniform(-1, 1) # In a real ML model, this comes from a dependency parser
+            score = random.uniform(-1, 1) 
             aspects.append({"aspect": noun, "sentiment": "Positive" if score > 0 else "Negative", "score": score})
     return aspects[:4]
 
@@ -104,9 +108,8 @@ def detect_emotion(text):
     return "Neutral"
 
 def calculate_sarcasm(text, polarity):
-    # If text has positive words but overall context implies delay/bad service
     if polarity > 0.2 and any(w in text.lower() for w in ['late', 'slow', 'wait', 'never']):
-        return random.uniform(60, 95) # High Sarcasm Probability
+        return random.uniform(60, 95) 
     return random.uniform(5, 25)
 
 @app.post("/api/analyze")
@@ -115,20 +118,18 @@ async def analyze(request: dict):
     text = request['text']
     blob = TextBlob(text)
     
-    # Core Metrics
     polarity = blob.sentiment.polarity
     sentiment = "Positive" if polarity > 0.1 else "Negative" if polarity < -0.1 else "Neutral"
     
-    # Advanced Metrics
     emotion = detect_emotion(text)
     aspects = extract_aspects(text)
     sarcasm_prob = calculate_sarcasm(text, polarity)
     
     latency = (time.time() - start_time) * 1000
     
-    conn = sqlite3.connect('fyp_database.db')
+    conn = psycopg2.connect(DB_URL)
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO logs (username, text, sentiment, polarity_score, emotion, sarcasm_score) VALUES (?, ?, ?, ?, ?, ?)", 
+    cursor.execute("INSERT INTO logs (username, text, sentiment, polarity_score, emotion, sarcasm_score) VALUES (%s, %s, %s, %s, %s, %s)", 
                    (request.get('username', 'anonymous'), text, sentiment, polarity, emotion, sarcasm_prob))
     conn.commit()
     conn.close()

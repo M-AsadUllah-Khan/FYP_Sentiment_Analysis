@@ -67,7 +67,7 @@ def render_intro_page():
         <div style='display: flex; justify-content: center; width: 100%; margin-bottom: 25px;'>
             <div style='max-width: 850px; width: 100%;'>
                 <p style='font-size: 1.15rem; opacity: 0.85; text-align: justify; line-height: 1.7; margin: 0;'>
-                    Reading thousands of customer reviews manually is nearly impossible for any business. To solve this practical problem, I developed this E-COMMERCE SENTIMENTS ANALYSIS SYSTEM. As my Capstone Project, the <b>NATURAL LANGUAGE PROCESSING (NLP) SYSTEM</b> automates sentiment analysis, decoding complex human emotions into actionable strategic metrics. By identifying underlying patterns in e-commerce feedback, it empowers businesses to optimise product development and proactively enhance customer satisfaction.
+                    Reading thousands of customer reviews manually is nearly impossible for any business. To solve this practical problem, I developed this AI SENTIMENTS ANALYSIS SYSTEM. As my Capstone Project, the <b>NATURAL LANGUAGE PROCESSING (NLP) SYSTEM</b> automates sentiment analysis, decoding complex human emotions into actionable strategic metrics. By identifying underlying patterns in e-commerce feedback, it empowers businesses to optimise product development and proactively enhance customer satisfaction.
                 </p>
             </div>
         </div>
@@ -117,7 +117,7 @@ def render_intro_page():
                 encoded_string = base64.b64encode(image_file.read()).decode()
             st.markdown(f'<img src="data:image/jpeg;base64,{encoded_string}" class="profile-img">', unsafe_allow_html=True)
         else:
-            st.warning("Please place 'asad(1).jpeg' in folder.")
+            st.warning("Please place 'asad.jpeg' in folder.")
             
         # Skills
         st.markdown("<h4 style='margin-top:25px; color:#3b82f6;'>Technical Expertise</h4>", unsafe_allow_html=True)
@@ -139,7 +139,7 @@ def render_intro_page():
             </div>
             
             <h3 style='margin-top:30px; color:#3b82f6; border-bottom:1px solid rgba(59,130,246,0.3); padding-bottom:10px;'>About The Project</h3>
-            <p style='text-align:justify; line-height:1.7; opacity:0.85;'>I am a passionate Full-Stack Developer and AI specialist. This <b>E-COMMERCE SENTIMENTS ANALYSIS SYSTEM</b> is my Capstone Project, designed to automate sentiment analysis in the e-commerce sector. I independently engineered the entire pipeline—from the high-performance NLP algorithms to this interactive dashboard—ensuring a seamless blend of data science and premium user experience.</p>
+            <p style='text-align:justify; line-height:1.7; opacity:0.85;'>I am a passionate Full-Stack Developer and AI specialist. This <b>AI SENTIMENTS ANALYSIS SYSTEM</b> is my Capstone Project, designed to automate sentiment analysis in the e-commerce sector. I independently engineered the entire pipeline—from the high-performance NLP algorithms to this interactive dashboard—ensuring a seamless blend of data science and premium user experience.</p>
             
             <p style='text-align:justify; line-height:1.7; opacity:0.85; margin-top: 15px;'><b style='color: #3b82f6;'>Why I Selected This Project:</b><br>In today's digital era, e-commerce businesses are overwhelmed by thousands of customer reviews. Manually reading and extracting meaningful insights from this massive unstructured data is practically impossible. I chose this project to solve this real-world bottleneck by leveraging Artificial Intelligence to decode human emotions accurately at scale.</p>
 

@@ -1,13 +1,15 @@
-import sqlite3
+import psycopg2
 import datetime
 
-DB_NAME = "ecommerce_ai.db"
+# YAHAN APNA NEON DB KA URL PASTE KAREIN
+DB_URL = "postgresql://user:password@ep-host.neon.tech/neondb"
 
 def init_db():
-    conn = sqlite3.connect(DB_NAME)
+    conn = psycopg2.connect(DB_URL)
     c = conn.cursor()
+    # AUTOINCREMENT ki jagah SERIAL
     c.execute('''CREATE TABLE IF NOT EXISTS system_logs 
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                 (id SERIAL PRIMARY KEY, 
                   timestamp TEXT, 
                   review_text TEXT, 
                   polarity REAL, 
@@ -16,16 +18,17 @@ def init_db():
     conn.close()
 
 def save_analysis(text, polarity, sentiment):
-    conn = sqlite3.connect(DB_NAME)
+    conn = psycopg2.connect(DB_URL)
     c = conn.cursor()
     time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    c.execute("INSERT INTO system_logs (timestamp, review_text, polarity, sentiment) VALUES (?, ?, ?, ?)", 
+    # ? ki jagah %s 
+    c.execute("INSERT INTO system_logs (timestamp, review_text, polarity, sentiment) VALUES (%s, %s, %s, %s)", 
               (time_now, text, polarity, sentiment))
     conn.commit()
     conn.close()
 
 def get_all_logs():
-    conn = sqlite3.connect(DB_NAME)
+    conn = psycopg2.connect(DB_URL)
     c = conn.cursor()
     c.execute("SELECT * FROM system_logs ORDER BY timestamp DESC")
     rows = c.fetchall()
