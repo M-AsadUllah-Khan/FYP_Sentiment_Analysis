@@ -47,7 +47,7 @@ def inject_global_styles():
             .secure-badge-static, .welcome-badge {{ height: 45px !important; display: flex !important; align-items: center !important; justify-content: center !important; margin-top: 0px !important; box-sizing: border-box !important; }}
 
             /* ========================================================= */
-            /* --- ULTRA PRO MAX CYBER HEADER (LOCKED) --- */
+            /* --- ULTRA PRO MAX CYBER HEADER --- */
             /* ========================================================= */
             .cyber-header {{ 
                 background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.85) 50%, rgba(15, 23, 42, 0.95) 100%);
@@ -107,24 +107,8 @@ def inject_global_styles():
             @keyframes equalize {{ 0% {{ height: 8px; }} 100% {{ height: 45px; }} }}
             
             /* ========================================================= */
-            /* --- FOOTER FIXES FOR IPHONE SE / SMALL SCREENS --- */
-            /* ========================================================= */
             
-            /* Replaced inner hardcoded spans with a flexible block that wraps gracefully */
-            .footer-block {{
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-wrap: wrap; /* CRITICAL: Allows long text to break cleanly without overflow */
-                color: {footer_text};
-                font-size: 13px;
-                font-weight: 600;
-                opacity: 0.95;
-                gap: 5px;
-                text-align: center;
-                line-height: 1.5;
-            }}
-
+            .footer-block {{ display: flex; align-items: center; justify-content: center; flex-wrap: wrap; color: {footer_text}; font-size: 13px; font-weight: 600; opacity: 0.95; gap: 5px; text-align: center; line-height: 1.5; }}
             .animated-footer {{ position: static !important; width: 100%; max-width: 1400px; margin: 20px auto !important; background: {footer_bg}; border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 50px; padding: 12px 35px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); box-shadow: 0 10px 40px {footer_shadow}; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; flex-wrap: wrap; }}
             .animated-footer:hover {{ box-shadow: 0 15px 50px {footer_shadow}, 0 0 30px rgba(59, 130, 246, 0.3); transform: translateY(-6px); border-color: rgba(59, 130, 246, 0.8); }}
             .animated-footer::before {{ content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, #3b82f6, #06b6d4, #8b5cf6, transparent); background-size: 200% 100%; animation: laserScan 3s linear infinite; }}
@@ -141,9 +125,6 @@ def inject_global_styles():
             .dev-name {{ background: linear-gradient(90deg, #3b82f6, #06b6d4, #8b5cf6, #3b82f6); -webkit-background-clip: text; color: transparent !important; background-size: 200% auto; font-weight: 900; font-size: 14.5px; letter-spacing: 0.5px; display: inline-block; cursor: pointer; animation: shine 3s linear infinite, devPulse 2s infinite alternate; border-bottom: 2px dashed rgba(6,182,212, 0.4); padding-bottom: 2px; }}
             @keyframes devPulse {{ 0% {{ transform: scale(1); filter: drop-shadow(0 0 2px rgba(59,130,246,0.5)); }} 100% {{ transform: scale(1.04); filter: drop-shadow(0 0 8px rgba(6,182,212,0.8)); }} }}
             
-            .main .block-container {{ padding-bottom: 1rem !important; }}
-            footer {{ display: none !important; }}
-
             /* --- RESPONSIVE FIXES LOCKED --- */
             @media (max-width: 1024px) {{
                 .animated-footer {{ justify-content: center !important; border-radius: 25px !important; gap: 15px; }}
@@ -175,7 +156,6 @@ def inject_global_styles():
                 div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(3),
                 div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(4) {{ flex-basis: 48% !important; }} 
 
-                /* Mobile Footer Gap fixes */
                 .animated-footer {{ flex-direction: column !important; border-radius: 20px !important; padding: 20px 15px !important; justify-content: center !important; text-align: center !important; gap: 12px !important; }}
                 .footer-block {{ width: 100% !important; justify-content: center !important; }}
             }}
@@ -185,15 +165,23 @@ def inject_global_styles():
                 div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(4) {{ flex-basis: 48% !important; }} 
                 div.stButton > button {{ font-size: 11px !important; padding: 0 5px !important; height: 40px !important; }}
                 .secure-badge-static, .welcome-badge {{ font-size: 12px !important; height: 40px !important; }}
-                
-                /* iPhone SE Footer Precision */
                 .footer-block {{ font-size: 11.5px !important; gap: 4px !important; line-height: 1.6 !important; }}
                 .dev-name {{ font-size: 12.5px !important; }}
                 .anim-core svg {{ width: 16px; height: 16px; }}
             }}
-            
-            header[data-testid="stHeader"] {{ display: none !important; }}
-            div.block-container {{ padding-top: 2.5rem !important; padding-bottom: 0px !important; }}
+
+            /* --- STREAMLIT BRANDING NUKE (MASLA 2 FIX) --- */
+            header[data-testid="stHeader"] { display: none !important; }
+            footer { display: none !important; }
+            [data-testid="stDecoration"] { display: none !important; }
+            [data-testid="stToolbar"] { display: none !important; visibility: hidden !important; }
+            .stDeployButton { display: none !important; visibility: hidden !important; }
+            .viewerBadge_container__1QSob { display: none !important; visibility: hidden !important; }
+            .viewerBadge_link__1S137 { display: none !important; visibility: hidden !important; }
+            div[class^="st-emotion-cache-"] > a { display: none !important; }
+            #MainMenu { visibility: hidden !important; }
+
+            div.block-container { padding-top: 2.5rem !important; padding-bottom: 0px !important; }
         </style>
     """,
         unsafe_allow_html=True,
@@ -259,8 +247,6 @@ def render_footer():
     import datetime
     current_year = datetime.datetime.now().year
     
-    # NEW HTML STRUCTURE FOR FOOTER: Removed inline flex styling that forced overflow. 
-    # Used flex-wrapping blocks to allow iPhone SE to stack wording perfectly centered.
     html = f"""<div class='animated-footer'>
 <div class='footer-block'>
 <span class='anim-copyright'>©️</span>

@@ -1,17 +1,18 @@
 import streamlit as st
-from auth_system import render_auth_ui
-from dashboards import render_user_dashboard
-from intro_page import render_intro_page
-from auth_system import check_persistent_login
 from layout import show_neural_loader
 
-# Screen Loader
+# 1. Page Config (Sab se pehli command honi chahiye)
+st.set_page_config(page_title="AI Sentiments Analyzer", page_icon="📊", layout="wide")
+
+# 2. Loader foran chalayen (Heavy files load hone se pehle!)
 show_neural_loader() 
 
-check_persistent_login()
+# 3. Ab baqi heavy imports karein
+from auth_system import render_auth_ui, check_persistent_login
+from dashboards import render_user_dashboard
+from intro_page import render_intro_page
 
-# ==========================================
-st.set_page_config(page_title="AI Sentiments Analyzer", page_icon="📊", layout="wide")
+check_persistent_login()
 
 # ==========================================
 # 2. SESSION STATE & DYNAMIC DATA INIT
