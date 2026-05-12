@@ -165,23 +165,24 @@ def inject_global_styles():
                 div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(4) {{ flex-basis: 48% !important; }} 
                 div.stButton > button {{ font-size: 11px !important; padding: 0 5px !important; height: 40px !important; }}
                 .secure-badge-static, .welcome-badge {{ font-size: 12px !important; height: 40px !important; }}
+                
                 .footer-block {{ font-size: 11.5px !important; gap: 4px !important; line-height: 1.6 !important; }}
                 .dev-name {{ font-size: 12.5px !important; }}
                 .anim-core svg {{ width: 16px; height: 16px; }}
             }}
 
             /* --- STREAMLIT BRANDING NUKE (MASLA 2 FIX) --- */
-            header[data-testid="stHeader"] { display: none !important; }
-            footer { display: none !important; }
-            [data-testid="stDecoration"] { display: none !important; }
-            [data-testid="stToolbar"] { display: none !important; visibility: hidden !important; }
-            .stDeployButton { display: none !important; visibility: hidden !important; }
-            .viewerBadge_container__1QSob { display: none !important; visibility: hidden !important; }
-            .viewerBadge_link__1S137 { display: none !important; visibility: hidden !important; }
-            div[class^="st-emotion-cache-"] > a { display: none !important; }
-            #MainMenu { visibility: hidden !important; }
+            header[data-testid="stHeader"] {{ display: none !important; }}
+            footer {{ display: none !important; }}
+            [data-testid="stDecoration"] {{ display: none !important; }}
+            [data-testid="stToolbar"] {{ display: none !important; visibility: hidden !important; }}
+            .stDeployButton {{ display: none !important; visibility: hidden !important; }}
+            .viewerBadge_container__1QSob {{ display: none !important; visibility: hidden !important; }}
+            .viewerBadge_link__1S137 {{ display: none !important; visibility: hidden !important; }}
+            div[class^="st-emotion-cache-"] > a {{ display: none !important; }}
+            #MainMenu {{ visibility: hidden !important; }}
 
-            div.block-container { padding-top: 2.5rem !important; padding-bottom: 0px !important; }
+            div.block-container {{ padding-top: 2.5rem !important; padding-bottom: 0px !important; }}
         </style>
     """,
         unsafe_allow_html=True,
