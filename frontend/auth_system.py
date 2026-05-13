@@ -1,5 +1,6 @@
 import streamlit as st
 import psycopg2
+import urllib.parse
 import time
 import re
 import random
@@ -11,11 +12,24 @@ DB_URL = st.secrets["DB_URL"]
 SENDER_EMAIL = st.secrets["SENDER_EMAIL"]
 APP_PASSWORD = st.secrets["APP_PASSWORD"]
 
+# --- BULLETPROOF DB CONNECTION HANDLER ---
+# Yeh function URL ko tod kar securely connect karega taake Port ka error kabhi na aaye.
+def get_db_connection():
+    url = urllib.parse.urlparse(DB_URL)
+    return psycopg2.connect(
+        database=url.path[1:],
+        user=url.username,
+        password=url.password,
+        host=url.hostname,
+        port=url.port if url.port else 5432,
+        sslmode='require'
+    )
+
 # SPEED OPTIMIZATION
 @st.cache_resource
 def init_db():
     try:
-        conn = psycopg2.connect(DB_URL)
+        conn = get_db_connection()
         c = conn.cursor()
         c.execute('CREATE TABLE IF NOT EXISTS users (email TEXT UNIQUE, first_name TEXT, last_name TEXT, password TEXT)')
         c.execute('CREATE TABLE IF NOT EXISTS usage (email TEXT UNIQUE, total INTEGER, positive INTEGER, negative INTEGER, neutral INTEGER)')
@@ -45,7 +59,7 @@ def check_persistent_login():
     if not st.session_state.get('logged_in', False):
         if 'auth_email' in st.query_params:
             email = st.query_params['auth_email']
-            conn = psycopg2.connect(DB_URL)
+            conn = get_db_connection()
             c = conn.cursor()
             c.execute('SELECT * FROM users WHERE email=%s', (email,))
             user = c.fetchone()
@@ -95,7 +109,7 @@ def render_auth_ui():
                     if not email_login or not p:
                         st.warning("⚠️ Both Email and Password are required.")
                     else:
-                        conn = psycopg2.connect(DB_URL)
+                        conn = get_db_connection()
                         c = conn.cursor()
                         c.execute('SELECT * FROM users WHERE email=%s AND password=%s', (email_login, p))
                         user = c.fetchone()
@@ -131,7 +145,7 @@ def render_auth_ui():
                         elif len(pw) < 8 or not re.search(r"[A-Z]", pw) or not re.search(r"[!@#$%^&*(),.?\":{}|<>]", pw):
                             st.error("⚠️ Password must be at least 8 characters long, contain at least 1 Uppercase letter, and 1 Special character.")
                         else:
-                            conn = psycopg2.connect(DB_URL)
+                            conn = get_db_connection()
                             c = conn.cursor()
                             c.execute('SELECT * FROM users WHERE email=%s', (email_reg,))
                             existing_user = c.fetchone()
@@ -164,7 +178,7 @@ def render_auth_ui():
                         if entered_otp == st.session_state['generated_otp']:
                             try:
                                 user_data = st.session_state['temp_user_data']
-                                conn = psycopg2.connect(DB_URL)
+                                conn = get_db_connection()
                                 c = conn.cursor()
                                 c.execute('INSERT INTO users VALUES (%s, %s, %s, %s)', user_data)
                                 c.execute('INSERT INTO usage VALUES (%s, 0, 0, 0, 0)', (user_data[0],))
@@ -201,7 +215,7 @@ def render_auth_ui():
                     
                     if submit_recover:
                         if rec_email_input:
-                            conn = psycopg2.connect(DB_URL)
+                            conn = get_db_connection()
                             c = conn.cursor()
                             c.execute('SELECT * FROM users WHERE email=%s', (rec_email_input,))
                             existing_user = c.fetchone()
@@ -256,7 +270,7 @@ def render_auth_ui():
                         elif len(new_pw) < 8 or not re.search(r"[A-Z]", new_pw) or not re.search(r"[!@#$%^&*(),.?\":{}|<>]", new_pw):
                             st.error("⚠️ Minimum 8 characters, 1 Uppercase, 1 Special character required.")
                         else:
-                            conn = psycopg2.connect(DB_URL)
+                            conn = get_db_connection()
                             c = conn.cursor()
                             c.execute("UPDATE users SET password = %s WHERE email = %s", (new_pw, st.session_state['rec_email']))
                             conn.commit()

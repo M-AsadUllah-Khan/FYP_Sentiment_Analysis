@@ -14,9 +14,7 @@ def inject_global_styles():
     card_bg = "rgba(30, 41, 59, 0.85)" if is_dark else "rgba(255, 255, 255, 0.95)"
     border = "rgba(59, 130, 246, 0.5)"
 
-    # --- DYNAMIC THEME VARIABLES HEADER & FOOTER ---
-    
-    # Header Variables
+    # --- HEADER & FOOTER ---
     header_bg = (
         "linear-gradient(145deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.75) 50%, rgba(15, 23, 42, 0.85) 100%)"
         if is_dark
@@ -30,7 +28,6 @@ def inject_global_styles():
         else "0 15px 35px -10px rgba(59, 130, 246, 0.15), inset 0 1px 0px rgba(255, 255, 255, 0.8), inset 0 -1px 20px rgba(59, 130, 246, 0.05)"
     )
     
-    # Footer Variables
     footer_bg = (
         "linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8))"
         if is_dark
@@ -44,7 +41,6 @@ def inject_global_styles():
     )
     footer_text_color = "#e2e8f0" if is_dark else "#475569"
     
-    # Text & Badges
     glow_text_bg = (
         "linear-gradient(to right, #ffffff 0%, #a5b4fc 50%, #38bdf8 100%)"
         if is_dark
@@ -119,7 +115,6 @@ def inject_global_styles():
             .header-center-col {{ flex: 4; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 0px !important; }}
             .header-right-col {{ flex: 1; display: flex; justify-content: flex-end; align-items: center; padding-right: 15px; }}
             
-            /* CLIPPING BUG FIX ENFORCED */
             .glow-text {{ 
                 font-family: 'Segoe UI', system-ui, sans-serif; 
                 font-weight: 900; 
@@ -186,14 +181,11 @@ def inject_global_styles():
             .footer-block {{ display: flex; align-items: center; justify-content: center; flex-wrap: wrap; color: {footer_text_color}; font-size: 13.5px; font-weight: 600; opacity: 0.95; gap: 6px; text-align: center; line-height: 1.5; letter-spacing: 0.3px; }}
             
             .animated-footer {{ 
-                position: static !important; 
-                width: 100%; 
-                max-width: 1400px; 
-                margin: 25px auto 10px auto !important; 
+                margin: auto auto 10px auto !important; 
                 background: {footer_bg} !important; 
                 border: 1px solid {footer_border} !important; 
                 border-top: 1px solid rgba(255,255,255,0.2) !important;
-                border-radius: 100px !important; /* Mac OS Pill Shape */
+                border-radius: 100px !important; 
                 padding: 14px 40px; 
                 z-index: 1000; 
                 display: flex; 
@@ -205,6 +197,7 @@ def inject_global_styles():
                 transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
                 overflow: hidden; 
                 flex-wrap: wrap; 
+                width: 100%; max-width: 1400px;
             }}
             .animated-footer:hover {{ 
                 box-shadow: 0 25px 40px -10px rgba(59, 130, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important; 
@@ -299,16 +292,13 @@ def inject_global_styles():
                 .anim-core svg {{ width: 16px; height: 16px; }}
             }}
 
-            /* --- STREAMLIT BRANDING NUKE --- */
+            /* --- HIDE STREAMLIT BRANDING  --- */
             header[data-testid="stHeader"] {{ display: none !important; }}
-            footer {{ display: none !important; }}
-            [data-testid="stDecoration"] {{ display: none !important; }}
-            [data-testid="stToolbar"] {{ display: none !important; visibility: hidden !important; }}
-            .stDeployButton {{ display: none !important; visibility: hidden !important; }}
-            .viewerBadge_container__1QSob {{ display: none !important; visibility: hidden !important; }}
-            .viewerBadge_link__1S137 {{ display: none !important; visibility: hidden !important; }}
-            div[class^="st-emotion-cache-"] > a {{ display: none !important; }}
-            #MainMenu {{ visibility: hidden !important; }}
+            footer[data-testid="stFooter"] {{ display: none !important; }}
+            
+            /* Target specific Cloud badges without touching app structural divs */
+            .stDeployButton, [data-testid="stToolbar"], #MainMenu {{ display: none !important; visibility: hidden !important; }}
+            div[class*="viewerBadge"], div[class*="manage-app"] {{ display: none !important; }}
 
             div.block-container {{ padding-top: 2.5rem !important; padding-bottom: 0px !important; }}
         </style>
@@ -375,6 +365,8 @@ def render_header():
 def render_footer():
     import datetime
     current_year = datetime.datetime.now().year
+    
+    st.markdown("<div style='height: 25vh; flex-grow: 1;'></div>", unsafe_allow_html=True)
     
     html = f"""<div class='animated-footer'>
 <div class='footer-block'>
