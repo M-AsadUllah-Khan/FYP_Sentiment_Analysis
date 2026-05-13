@@ -8,7 +8,7 @@ import os
 from email.mime.text import MIMEText
 from layout import render_header, render_footer
 
-DB_URL = os.environ.get("DB_URL") or st.secrets.get("DB_URL")
+DB_URL = os.environ.get("DB_URL")
 SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
 APP_PASSWORD = os.environ.get("APP_PASSWORD")
 
