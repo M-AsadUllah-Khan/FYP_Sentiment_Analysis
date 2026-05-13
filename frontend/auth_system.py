@@ -1,6 +1,5 @@
 import streamlit as st
 import psycopg2
-import urllib.parse
 import time
 import re
 import random
@@ -8,21 +7,17 @@ import smtplib
 from email.mime.text import MIMEText
 from layout import render_header, render_footer
 
-DB_URL = st.secrets["DB_URL"]
-SENDER_EMAIL = st.secrets["SENDER_EMAIL"]
-APP_PASSWORD = st.secrets["APP_PASSWORD"]
+SENDER_EMAIL = st.secrets.get("SENDER_EMAIL", "asaddevpk@gmail.com")
+APP_PASSWORD = st.secrets.get("APP_PASSWORD", "flki fpyc havy kalx")
 
-# --- BULLETPROOF DB CONNECTION HANDLER ---
-# Yeh function URL ko tod kar securely connect karega taake Port ka error kabhi na aaye.
 def get_db_connection():
-    url = urllib.parse.urlparse(DB_URL)
     return psycopg2.connect(
-        database=url.path[1:],
-        user=url.username,
-        password=url.password,
-        host=url.hostname,
-        port=url.port if url.port else 5432,
-        sslmode='require'
+        host="ep-plain-water-aohw9oyz.c-2.ap-southeast-1.aws.neon.tech",
+        port=5432,
+        database="neondb",
+        user="neondb_owner",
+        password="npg_Gh9ASTp0QUzB",
+        sslmode="require"
     )
 
 # SPEED OPTIMIZATION
@@ -59,16 +54,19 @@ def check_persistent_login():
     if not st.session_state.get('logged_in', False):
         if 'auth_email' in st.query_params:
             email = st.query_params['auth_email']
-            conn = get_db_connection()
-            c = conn.cursor()
-            c.execute('SELECT * FROM users WHERE email=%s', (email,))
-            user = c.fetchone()
-            conn.close()
-            if user:
-                st.session_state['logged_in'] = True
-                st.session_state['user_email'] = user[0] 
-                st.session_state['last_name'] = user[2]
-                st.session_state['page'] = 'dashboard'
+            try:
+                conn = get_db_connection()
+                c = conn.cursor()
+                c.execute('SELECT * FROM users WHERE email=%s', (email,))
+                user = c.fetchone()
+                conn.close()
+                if user:
+                    st.session_state['logged_in'] = True
+                    st.session_state['user_email'] = user[0] 
+                    st.session_state['last_name'] = user[2]
+                    st.session_state['page'] = 'dashboard'
+            except:
+                pass
 
 def render_auth_ui():
     check_persistent_login()
@@ -109,21 +107,24 @@ def render_auth_ui():
                     if not email_login or not p:
                         st.warning("⚠️ Both Email and Password are required.")
                     else:
-                        conn = get_db_connection()
-                        c = conn.cursor()
-                        c.execute('SELECT * FROM users WHERE email=%s AND password=%s', (email_login, p))
-                        user = c.fetchone()
-                        conn.close()
-                        
-                        if user:
-                            st.session_state['logged_in'] = True
-                            st.session_state['user_email'] = user[0] 
-                            st.session_state['last_name'] = user[2]
-                            st.session_state['page'] = 'dashboard'
-                            st.query_params['auth_email'] = user[0]
-                            st.rerun()
-                        else:
-                            st.error("⚠️ Incorrect Email or Password!")
+                        try:
+                            conn = get_db_connection()
+                            c = conn.cursor()
+                            c.execute('SELECT * FROM users WHERE email=%s AND password=%s', (email_login, p))
+                            user = c.fetchone()
+                            conn.close()
+                            
+                            if user:
+                                st.session_state['logged_in'] = True
+                                st.session_state['user_email'] = user[0] 
+                                st.session_state['last_name'] = user[2]
+                                st.session_state['page'] = 'dashboard'
+                                st.query_params['auth_email'] = user[0]
+                                st.rerun()
+                            else:
+                                st.error("⚠️ Incorrect Email or Password!")
+                        except Exception as e:
+                            st.error(f"Login Error: {e}")
 
         # ==========================================
         # TAB 2: REGISTER FLOW
@@ -145,24 +146,27 @@ def render_auth_ui():
                         elif len(pw) < 8 or not re.search(r"[A-Z]", pw) or not re.search(r"[!@#$%^&*(),.?\":{}|<>]", pw):
                             st.error("⚠️ Password must be at least 8 characters long, contain at least 1 Uppercase letter, and 1 Special character.")
                         else:
-                            conn = get_db_connection()
-                            c = conn.cursor()
-                            c.execute('SELECT * FROM users WHERE email=%s', (email_reg,))
-                            existing_user = c.fetchone()
-                            conn.close()
+                            try:
+                                conn = get_db_connection()
+                                c = conn.cursor()
+                                c.execute('SELECT * FROM users WHERE email=%s', (email_reg,))
+                                existing_user = c.fetchone()
+                                conn.close()
 
-                            if existing_user:
-                                st.error("⚠️ This Email is already registered! PLease register with another Email.")
-                            else:
-                                with st.spinner("Generating OTP and sending to your email..."):
-                                    otp = str(random.randint(100000, 999999))
-                                    if send_otp_email(email_reg, otp, "Registration"):
-                                        st.session_state['temp_user_data'] = (email_reg, fn, ln, pw)
-                                        st.session_state['generated_otp'] = otp
-                                        st.session_state['otp_step'] = True
-                                        st.rerun()
-                                    else:
-                                        st.error("⚠️ Failed to send OTP. Please check your network.")
+                                if existing_user:
+                                    st.error("⚠️ This Email is already registered! PLease register with another Email.")
+                                else:
+                                    with st.spinner("Generating OTP and sending to your email..."):
+                                        otp = str(random.randint(100000, 999999))
+                                        if send_otp_email(email_reg, otp, "Registration"):
+                                            st.session_state['temp_user_data'] = (email_reg, fn, ln, pw)
+                                            st.session_state['generated_otp'] = otp
+                                            st.session_state['otp_step'] = True
+                                            st.rerun()
+                                        else:
+                                            st.error("⚠️ Failed to send OTP. Please check your network.")
+                            except Exception as e:
+                                st.error(f"Registration Error: {e}")
 
             else:
                 st.info(f"📧 A 6-digit OTP has been sent to **{st.session_state['temp_user_data'][0]}**")
@@ -215,24 +219,27 @@ def render_auth_ui():
                     
                     if submit_recover:
                         if rec_email_input:
-                            conn = get_db_connection()
-                            c = conn.cursor()
-                            c.execute('SELECT * FROM users WHERE email=%s', (rec_email_input,))
-                            existing_user = c.fetchone()
-                            conn.close()
-                            
-                            if existing_user:
-                                with st.spinner("Sending Recovery OTP..."):
-                                    otp = str(random.randint(100000, 999999))
-                                    if send_otp_email(rec_email_input, otp, "Account Recovery"):
-                                        st.session_state['rec_email'] = rec_email_input
-                                        st.session_state['rec_otp'] = otp
-                                        st.session_state['rec_step'] = 'otp'
-                                        st.rerun()
-                                    else:
-                                        st.error("⚠️ Failed to send OTP. Try again.")
-                            else:
-                                st.error("⚠️ Email not found in our database.")
+                            try:
+                                conn = get_db_connection()
+                                c = conn.cursor()
+                                c.execute('SELECT * FROM users WHERE email=%s', (rec_email_input,))
+                                existing_user = c.fetchone()
+                                conn.close()
+                                
+                                if existing_user:
+                                    with st.spinner("Sending Recovery OTP..."):
+                                        otp = str(random.randint(100000, 999999))
+                                        if send_otp_email(rec_email_input, otp, "Account Recovery"):
+                                            st.session_state['rec_email'] = rec_email_input
+                                            st.session_state['rec_otp'] = otp
+                                            st.session_state['rec_step'] = 'otp'
+                                            st.rerun()
+                                        else:
+                                            st.error("⚠️ Failed to send OTP. Try again.")
+                                else:
+                                    st.error("⚠️ Email not found in our database.")
+                            except Exception as e:
+                                st.error(f"Recovery Error: {e}")
                         else:
                             st.warning("Please enter your email.")
                             
@@ -270,13 +277,16 @@ def render_auth_ui():
                         elif len(new_pw) < 8 or not re.search(r"[A-Z]", new_pw) or not re.search(r"[!@#$%^&*(),.?\":{}|<>]", new_pw):
                             st.error("⚠️ Minimum 8 characters, 1 Uppercase, 1 Special character required.")
                         else:
-                            conn = get_db_connection()
-                            c = conn.cursor()
-                            c.execute("UPDATE users SET password = %s WHERE email = %s", (new_pw, st.session_state['rec_email']))
-                            conn.commit()
-                            conn.close()
-                            
-                            st.session_state['rec_step'] = 'start'
-                            st.success("✅ Password updated successfully! Please switch to Login tab.")
+                            try:
+                                conn = get_db_connection()
+                                c = conn.cursor()
+                                c.execute("UPDATE users SET password = %s WHERE email = %s", (new_pw, st.session_state['rec_email']))
+                                conn.commit()
+                                conn.close()
+                                
+                                st.session_state['rec_step'] = 'start'
+                                st.success("✅ Password updated successfully! Please switch to Login tab.")
+                            except Exception as e:
+                                st.error(f"Password Update Error: {e}")
 
     render_footer()

@@ -14,7 +14,6 @@ def inject_global_styles():
     card_bg = "rgba(30, 41, 59, 0.85)" if is_dark else "rgba(255, 255, 255, 0.95)"
     border = "rgba(59, 130, 246, 0.5)"
 
-    # --- HEADER & FOOTER ---
     header_bg = (
         "linear-gradient(145deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.75) 50%, rgba(15, 23, 42, 0.85) 100%)"
         if is_dark
@@ -68,7 +67,7 @@ def inject_global_styles():
             @keyframes cinematicTransition {{ 0% {{ opacity: 0; transform: translateY(30px) scale(0.97); filter: blur(10px); }} 100% {{ opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }} }}
             .stMarkdown, p, h1, h2, h3, h4, h5, h6 {{ color: {text} !important; }}
             
-            /* --- BUTTONS --- */
+            /* --- LOCKED BUTTONS --- */
             div.stButton > button {{ 
                 background: {card_bg} !important; color: {text} !important; border: 1px solid {border} !important; border-radius: 8px !important; font-weight: bold !important; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
                 height: 45px !important; margin-top: 0px !important; padding: 0 15px !important; box-sizing: border-box !important;
@@ -181,7 +180,9 @@ def inject_global_styles():
             .footer-block {{ display: flex; align-items: center; justify-content: center; flex-wrap: wrap; color: {footer_text_color}; font-size: 13.5px; font-weight: 600; opacity: 0.95; gap: 6px; text-align: center; line-height: 1.5; letter-spacing: 0.3px; }}
             
             .animated-footer {{ 
-                margin: auto auto 10px auto !important; 
+                margin: 50px auto 10px auto !important; /* Proper breathing room above */
+                position: relative !important; /* Back to safe normal flow */
+                clear: both !important;
                 background: {footer_bg} !important; 
                 border: 1px solid {footer_border} !important; 
                 border-top: 1px solid rgba(255,255,255,0.2) !important;
@@ -197,11 +198,12 @@ def inject_global_styles():
                 transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
                 overflow: hidden; 
                 flex-wrap: wrap; 
-                width: 100%; max-width: 1400px;
+                width: 100% !important; 
+                max-width: 1400px !important;
             }}
             .animated-footer:hover {{ 
                 box-shadow: 0 25px 40px -10px rgba(59, 130, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important; 
-                transform: translateY(-5px) scale(1.005); 
+                transform: translateY(-5px) scale(1.005) !important; 
                 border-color: rgba(59, 130, 246, 0.5) !important; 
             }}
             
@@ -220,7 +222,7 @@ def inject_global_styles():
             .dev-name {{ background: linear-gradient(90deg, #3b82f6, #06b6d4, #8b5cf6, #3b82f6); -webkit-background-clip: text; color: transparent !important; background-size: 200% auto; font-weight: 900; font-size: 15px; letter-spacing: 0.8px; display: inline-block; cursor: pointer; animation: shine 3s linear infinite, devPulse 2s infinite alternate; padding-bottom: 2px; text-shadow: 0 2px 10px rgba(59,130,246,0.15); }}
             @keyframes devPulse {{ 0% {{ transform: scale(1); filter: drop-shadow(0 0 2px rgba(59,130,246,0.3)); }} 100% {{ transform: scale(1.02); filter: drop-shadow(0 0 10px rgba(6,182,212,0.6)); }} }}
             
-            /* --- RESPONSIVE FIXES LOCKED --- */
+            /* --- RESPONSIVE --- */
             @media (max-width: 1024px) {{
                 .animated-footer {{ justify-content: center !important; border-radius: 35px !important; gap: 15px; padding: 18px 25px !important; }}
             }}
@@ -266,7 +268,7 @@ def inject_global_styles():
                 div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(3),
                 div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(4) {{ flex-basis: 48% !important; }} 
 
-                .animated-footer {{ flex-direction: column !important; border-radius: 22px !important; padding: 22px 15px !important; justify-content: center !important; text-align: center !important; gap: 14px !important; }}
+                .animated-footer {{ width: calc(100% - 24px) !important; flex-direction: column !important; border-radius: 22px !important; padding: 22px 15px !important; justify-content: center !important; text-align: center !important; gap: 14px !important; }}
                 .footer-block {{ width: 100% !important; justify-content: center !important; }}
             }}
             
@@ -292,15 +294,15 @@ def inject_global_styles():
                 .anim-core svg {{ width: 16px; height: 16px; }}
             }}
 
-            /* --- HIDE STREAMLIT BRANDING  --- */
+            /* --- SAFELY HIDE STREAMLIT BRANDING (NO BLANK SCREENS) --- */
             header[data-testid="stHeader"] {{ display: none !important; }}
             footer[data-testid="stFooter"] {{ display: none !important; }}
             
-            /* Target specific Cloud badges without touching app structural divs */
             .stDeployButton, [data-testid="stToolbar"], #MainMenu {{ display: none !important; visibility: hidden !important; }}
             div[class*="viewerBadge"], div[class*="manage-app"] {{ display: none !important; }}
 
-            div.block-container {{ padding-top: 2.5rem !important; padding-bottom: 0px !important; }}
+            /* RESET MAIN CONTAINER TO SAFE VALUES */
+            div.block-container {{ padding-top: 2.5rem !important; padding-bottom: 2rem !important; }}
         </style>
     """,
         unsafe_allow_html=True,
@@ -365,8 +367,6 @@ def render_header():
 def render_footer():
     import datetime
     current_year = datetime.datetime.now().year
-    
-    st.markdown("<div style='height: 25vh; flex-grow: 1;'></div>", unsafe_allow_html=True)
     
     html = f"""<div class='animated-footer'>
 <div class='footer-block'>

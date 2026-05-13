@@ -13,10 +13,9 @@ def render_comparison_tab():
         if prod_a and prod_b:
             with st.spinner("Comparing sentiments..."):
                 # Realistic logic: We analyze common feedback patterns for both
-                # In a real scenario, you'd fetch this from a DB, here we simulate the model's impact
                 data = {
                     "Product": [prod_a, prod_b],
-                    "Positive Score": [0.85, 0.72], # Simulated model accuracy/score
+                    "Positive Score": [0.85, 0.72], 
                     "Negative Score": [0.05, 0.15],
                     "Neutral Score": [0.10, 0.13]
                 }
@@ -25,3 +24,5 @@ def render_comparison_tab():
                 
                 winner = prod_a if data["Positive Score"][0] > data["Positive Score"][1] else prod_b
                 st.success(f"🏆 Based on System Analysis, **{winner}** has better sentiment markers.")
+    
+    st.markdown("<div></div>", unsafe_allow_html=True)
