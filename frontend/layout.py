@@ -14,13 +14,53 @@ def inject_global_styles():
     card_bg = "rgba(30, 41, 59, 0.85)" if is_dark else "rgba(255, 255, 255, 0.95)"
     border = "rgba(59, 130, 246, 0.5)"
 
-    footer_bg = (
-        "linear-gradient(135deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.9))"
+    # --- DYNAMIC THEME VARIABLES FOR ULTRA PREMIUM HEADER & FOOTER ---
+    
+    # Header Variables
+    header_bg = (
+        "linear-gradient(145deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.75) 50%, rgba(15, 23, 42, 0.85) 100%)"
         if is_dark
-        else "linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(241, 245, 249, 0.95))"
+        else "linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(241, 245, 249, 0.85) 50%, rgba(255, 255, 255, 0.9) 100%)"
     )
-    footer_text = "#e2e8f0" if is_dark else "#334155"
-    footer_shadow = "rgba(0, 0, 0, 0.4)" if is_dark else "rgba(148, 163, 184, 0.3)"
+    header_border_top = "rgba(255, 255, 255, 0.15)" if is_dark else "rgba(255, 255, 255, 0.6)"
+    header_border_bottom = "rgba(59, 130, 246, 0.5)" if is_dark else "rgba(59, 130, 246, 0.4)"
+    header_shadow = (
+        "0 20px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0px rgba(255, 255, 255, 0.1), inset 0 -1px 20px rgba(59, 130, 246, 0.1)" 
+        if is_dark 
+        else "0 15px 35px -10px rgba(59, 130, 246, 0.15), inset 0 1px 0px rgba(255, 255, 255, 0.8), inset 0 -1px 20px rgba(59, 130, 246, 0.05)"
+    )
+    
+    # Footer Variables
+    footer_bg = (
+        "linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8))"
+        if is_dark
+        else "linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(241, 245, 249, 0.9))"
+    )
+    footer_border = "rgba(255, 255, 255, 0.1)" if is_dark else "rgba(59, 130, 246, 0.15)"
+    footer_shadow = (
+        "0 15px 35px -5px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)" 
+        if is_dark 
+        else "0 10px 30px -5px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8)"
+    )
+    footer_text_color = "#e2e8f0" if is_dark else "#475569"
+    
+    # Text & Badges
+    glow_text_bg = (
+        "linear-gradient(to right, #ffffff 0%, #a5b4fc 50%, #38bdf8 100%)"
+        if is_dark
+        else "linear-gradient(to right, #0f172a 0%, #1d4ed8 50%, #0284c7 100%)"
+    )
+    glow_text_shadow = "0 4px 15px rgba(59, 130, 246, 0.3)" if is_dark else "0 2px 10px rgba(59, 130, 246, 0.15)"
+    
+    powered_by_bg = (
+        "linear-gradient(90deg, #94a3b8, #e2e8f0, #94a3b8)"
+        if is_dark
+        else "linear-gradient(90deg, #475569, #0f172a, #475569)"
+    )
+    
+    college_text_color = "#cbd5e1" if is_dark else "#334155"
+    college_badge_bg = "rgba(59, 130, 246, 0.15)" if is_dark else "rgba(59, 130, 246, 0.08)"
+    college_badge_border = "rgba(59, 130, 246, 0.3)" if is_dark else "rgba(59, 130, 246, 0.2)"
 
     st.markdown(
         f"""
@@ -47,29 +87,29 @@ def inject_global_styles():
             .secure-badge-static, .welcome-badge {{ height: 45px !important; display: flex !important; align-items: center !important; justify-content: center !important; margin-top: 0px !important; box-sizing: border-box !important; }}
 
             /* ========================================================= */
-            /* --- ULTRA PRO MAX CYBER HEADER --- */
+            /* --- ULTRA PRO MAX CYBER HEADER (PIXEL PERFECT) --- */
             /* ========================================================= */
             .cyber-header {{ 
-                background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.85) 50%, rgba(15, 23, 42, 0.95) 100%);
-                backdrop-filter: blur(18px); 
-                -webkit-backdrop-filter: blur(18px);
-                border-top: 1px solid rgba(255, 255, 255, 0.15);
-                border-bottom: 2px solid rgba(59, 130, 246, 0.6);
-                border-left: 1px solid rgba(59, 130, 246, 0.2);
-                border-right: 1px solid rgba(59, 130, 246, 0.2);
-                border-radius: 16px; 
+                background: {header_bg} !important;
+                backdrop-filter: blur(20px) saturate(150%); 
+                -webkit-backdrop-filter: blur(20px) saturate(150%);
+                border-top: 1px solid {header_border_top} !important;
+                border-bottom: 2px solid {header_border_bottom} !important;
+                border-left: 1px solid rgba(59, 130, 246, 0.15);
+                border-right: 1px solid rgba(59, 130, 246, 0.15);
+                border-radius: 20px; 
                 padding: 15px 20px; 
                 position: relative; 
                 overflow: hidden; 
                 animation: float 6s ease-in-out infinite; 
                 margin-bottom: 15px; 
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 0 25px rgba(59, 130, 246, 0.05); 
+                box-shadow: {header_shadow} !important; 
                 z-index: 3; 
-                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             }}
-            .cyber-header:hover {{ transform: translateY(-3px); box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 0 35px rgba(59, 130, 246, 0.15); }}
+            .cyber-header:hover {{ transform: translateY(-4px); filter: brightness(1.08); box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.25), inset 0 1px 0px rgba(255, 255, 255, 0.2) !important; }}
             .cyber-header::before {{ content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #6366f1, #0ea5e9, #6366f1, transparent); animation: cyber-scan 3.5s infinite; }}
-            .cyber-header::after {{ content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.08), transparent); transform: skewX(-25deg); animation: glass-sweep 7s infinite; pointer-events: none; }}
+            .cyber-header::after {{ content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent); transform: skewX(-25deg); animation: glass-sweep 7s infinite; pointer-events: none; }}
             @keyframes glass-sweep {{ 0% {{ left: -100%; }} 15% {{ left: 200%; }} 100% {{ left: 200%; }} }}
             @keyframes cyber-scan {{ 0% {{ top: -10%; }} 100% {{ top: 110%; }} }}
             @keyframes float {{ 0%, 100% {{ transform: translateY(0px); }} 50% {{ transform: translateY(-6px); }} }}
@@ -79,14 +119,47 @@ def inject_global_styles():
             .header-center-col {{ flex: 4; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 0px !important; }}
             .header-right-col {{ flex: 1; display: flex; justify-content: flex-end; align-items: center; padding-right: 15px; }}
             
-            .glow-text {{ font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 900; background: linear-gradient(to right, #ffffff 0%, #a5b4fc 50%, #38bdf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 4s linear infinite; margin: 0 !important; padding: 0 !important; font-size: 27px; line-height: 0.95 !important; letter-spacing: 1.5px; text-shadow: 0 4px 15px rgba(59, 130, 246, 0.25); }}
+            /* CLIPPING BUG FIX ENFORCED */
+            .glow-text {{ 
+                font-family: 'Segoe UI', system-ui, sans-serif; 
+                font-weight: 900; 
+                background: {glow_text_bg} !important; 
+                -webkit-background-clip: text !important; 
+                background-clip: text !important;
+                -webkit-text-fill-color: transparent !important; 
+                color: transparent !important;
+                background-size: 200% auto; 
+                animation: shine 4s linear infinite; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                font-size: 27px; 
+                line-height: 0.95 !important; 
+                letter-spacing: 1.5px; 
+                text-shadow: {glow_text_shadow} !important; 
+            }}
             @keyframes shine {{ to {{ background-position: 200% center; }} }}
             
-            .powered-by-reverted {{ margin: 2px 0 0 0 !important; padding: 0 !important; font-size: 13.5px; font-weight: 800; background: linear-gradient(90deg, #94a3b8, #e2e8f0, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 4s linear infinite reverse; letter-spacing: 2.5px; line-height: 1.0 !important; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }}
-            .college-header-info {{ margin: 4px 0 0 0 !important; font-size: 11px; opacity: 0.65; color: #cbd5e1 !important; letter-spacing: 0.5px; font-weight: 500; }}
+            .powered-by-reverted {{ 
+                margin: 3px 0 0 0 !important; 
+                padding: 0 !important; 
+                font-size: 13.5px; 
+                font-weight: 800; 
+                background: {powered_by_bg} !important; 
+                -webkit-background-clip: text !important; 
+                background-clip: text !important;
+                -webkit-text-fill-color: transparent !important; 
+                color: transparent !important;
+                background-size: 200% auto; 
+                animation: shine 4s linear infinite reverse; 
+                letter-spacing: 3px; 
+                line-height: 1.0 !important; 
+                text-shadow: 0 2px 8px rgba(0,0,0,0.15); 
+            }}
+            
+            .college-header-info {{ margin: 5px 0 0 0 !important; font-size: 11.5px; color: {college_text_color} !important; letter-spacing: 0.8px; font-weight: 600; opacity: 0.85; }}
 
-            .neural-core {{ width: 24px; height: 24px; border-radius: 50%; background: {accent}; position: relative; margin: 0; margin-right: 10px !important; display: inline-block; box-shadow: 0 0 12px {accent}; animation: corePulse 2s infinite alternate; flex-shrink: 0; transition: all 0.3s ease; }}
-            .cyber-header:hover .neural-core {{ box-shadow: 0 0 20px #3b82f6, 0 0 35px #8b5cf6; transform: scale(1.1); }}
+            .neural-core {{ width: 24px; height: 24px; border-radius: 50%; background: {accent}; position: relative; margin: 0; margin-right: 10px !important; display: inline-block; box-shadow: 0 0 15px {accent}; animation: corePulse 2s infinite alternate; flex-shrink: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }}
+            .cyber-header:hover .neural-core {{ box-shadow: 0 0 25px #3b82f6, 0 0 45px #8b5cf6; transform: scale(1.15); }}
             .neural-core::before, .neural-core::after {{ content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid {accent}; }}
             .neural-core::before {{ width: 42px; height: 42px; border-top-color: transparent; border-bottom-color: transparent; animation: spinCore 3s linear infinite; }}
             .neural-core::after {{ width: 58px; height: 58px; border-left-color: transparent; border-right-color: transparent; border-color: #8b5cf6 transparent #8b5cf6 transparent; animation: spinCoreReverse 4s linear infinite; border-width: 3px; }}
@@ -94,9 +167,9 @@ def inject_global_styles():
             @keyframes spinCore {{ 100% {{ transform: translate(-50%, -50%) rotate(360deg); }} }}
             @keyframes spinCoreReverse {{ 100% {{ transform: translate(-50%, -50%) rotate(-360deg); }} }}
             
-            .graph-container {{ display: flex; align-items: flex-end; gap: 6px; height: 45px; margin: 0; padding: 0; flex-shrink: 0; padding-right: 15px; transition: all 0.3s ease; }}
-            .cyber-header:hover .graph-container {{ filter: brightness(1.2); }}
-            .bar {{ width: 8px; border-radius: 4px; animation: equalize 1.2s infinite alternate ease-in-out; box-shadow: 0 0 8px rgba(0,0,0,0.5); }}
+            .graph-container {{ display: flex; align-items: flex-end; gap: 6px; height: 45px; margin: 0; padding: 0; flex-shrink: 0; padding-right: 15px; transition: all 0.4s ease; }}
+            .cyber-header:hover .graph-container {{ filter: brightness(1.2) saturate(1.2); transform: scale(1.05); transform-origin: bottom right; }}
+            .bar {{ width: 8px; border-radius: 4px; animation: equalize 1.2s infinite alternate ease-in-out; box-shadow: 0 0 8px rgba(0,0,0,0.3); }}
             .bar:nth-child(1) {{ background-color: {accent}; animation-delay: 0.1s; height: 18px; }}
             .bar:nth-child(2) {{ background-color: #10b981; animation-delay: 0.4s; height: 33px; }}
             .bar:nth-child(3) {{ background-color: #ef4444; animation-delay: 0.2s; height: 42px; }}
@@ -107,46 +180,90 @@ def inject_global_styles():
             @keyframes equalize {{ 0% {{ height: 8px; }} 100% {{ height: 45px; }} }}
             
             /* ========================================================= */
+            /* --- ULTRA PRO MAX FLOATING DOCK FOOTER --- */
+            /* ========================================================= */
             
-            .footer-block {{ display: flex; align-items: center; justify-content: center; flex-wrap: wrap; color: {footer_text}; font-size: 13px; font-weight: 600; opacity: 0.95; gap: 5px; text-align: center; line-height: 1.5; }}
-            .animated-footer {{ position: static !important; width: 100%; max-width: 1400px; margin: 20px auto !important; background: {footer_bg}; border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 50px; padding: 12px 35px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); box-shadow: 0 10px 40px {footer_shadow}; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; flex-wrap: wrap; }}
-            .animated-footer:hover {{ box-shadow: 0 15px 50px {footer_shadow}, 0 0 30px rgba(59, 130, 246, 0.3); transform: translateY(-6px); border-color: rgba(59, 130, 246, 0.8); }}
-            .animated-footer::before {{ content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, #3b82f6, #06b6d4, #8b5cf6, transparent); background-size: 200% 100%; animation: laserScan 3s linear infinite; }}
+            .footer-block {{ display: flex; align-items: center; justify-content: center; flex-wrap: wrap; color: {footer_text_color}; font-size: 13.5px; font-weight: 600; opacity: 0.95; gap: 6px; text-align: center; line-height: 1.5; letter-spacing: 0.3px; }}
+            
+            .animated-footer {{ 
+                position: static !important; 
+                width: 100%; 
+                max-width: 1400px; 
+                margin: 25px auto 10px auto !important; 
+                background: {footer_bg} !important; 
+                border: 1px solid {footer_border} !important; 
+                border-top: 1px solid rgba(255,255,255,0.2) !important;
+                border-radius: 100px !important; /* Mac OS Pill Shape */
+                padding: 14px 40px; 
+                z-index: 1000; 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center; 
+                backdrop-filter: blur(24px) saturate(150%); 
+                -webkit-backdrop-filter: blur(24px) saturate(150%); 
+                box-shadow: {footer_shadow} !important; 
+                transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+                overflow: hidden; 
+                flex-wrap: wrap; 
+            }}
+            .animated-footer:hover {{ 
+                box-shadow: 0 25px 40px -10px rgba(59, 130, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important; 
+                transform: translateY(-5px) scale(1.005); 
+                border-color: rgba(59, 130, 246, 0.5) !important; 
+            }}
+            
+            .animated-footer::before {{ content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #3b82f6, #0ea5e9, #8b5cf6, transparent); background-size: 200% 100%; animation: laserScan 4s ease-in-out infinite alternate; opacity: 0.7; }}
             @keyframes laserScan {{ 0% {{ background-position: 100% 0; }} 100% {{ background-position: -100% 0; }} }}
             
-            .anim-copyright {{ display: inline-block; animation: spin-slow 4s linear infinite; font-size: 15px; }}
+            .anim-copyright {{ display: inline-block; animation: spin-slow 4s linear infinite; font-size: 15px; color: {accent}; }}
             @keyframes spin-slow {{ 100% {{ transform: rotate(360deg); }} }}
-            .anim-core {{ display: inline-flex; align-items: center; justify-content: center; animation: pulse-core 2s ease-in-out infinite alternate; font-size: 17px; filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.8)); margin: 0 2px; }}
-            @keyframes pulse-core {{ 0% {{ transform: scale(0.9); }} 100% {{ transform: scale(1.2) rotate(15deg); filter: drop-shadow(0 0 12px rgba(59, 130, 246, 1)); }} }}
-            .anim-dev {{ display: inline-block; animation: typing-bounce 1.5s infinite; font-size: 17px; }}
+            .anim-core {{ display: inline-flex; align-items: center; justify-content: center; animation: pulse-core 2s ease-in-out infinite alternate; font-size: 18px; filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.8)); margin: 0 4px; color: #0ea5e9; }}
+            @keyframes pulse-core {{ 0% {{ transform: scale(0.9); }} 100% {{ transform: scale(1.2) rotate(15deg); filter: drop-shadow(0 0 15px rgba(59, 130, 246, 1)); }} }}
+            .anim-dev {{ display: inline-block; animation: typing-bounce 1.5s infinite; font-size: 18px; }}
             @keyframes typing-bounce {{ 0%, 100% {{ transform: translateY(0); }} 50% {{ transform: translateY(-4px); }} }}
-            .anim-grad {{ display: inline-block; animation: float-cap 3s ease-in-out infinite; font-size: 17px; filter: drop-shadow(0 0 4px rgba(255,255,255,0.3)); }}
+            .anim-grad {{ display: inline-block; animation: float-cap 3s ease-in-out infinite; font-size: 18px; filter: drop-shadow(0 0 5px rgba(59,130,246,0.4)); }}
             @keyframes float-cap {{ 0%, 100% {{ transform: translateY(0) rotate(0deg); }} 50% {{ transform: translateY(-4px) rotate(-10deg); }} }}
-            .dev-name {{ background: linear-gradient(90deg, #3b82f6, #06b6d4, #8b5cf6, #3b82f6); -webkit-background-clip: text; color: transparent !important; background-size: 200% auto; font-weight: 900; font-size: 14.5px; letter-spacing: 0.5px; display: inline-block; cursor: pointer; animation: shine 3s linear infinite, devPulse 2s infinite alternate; border-bottom: 2px dashed rgba(6,182,212, 0.4); padding-bottom: 2px; }}
-            @keyframes devPulse {{ 0% {{ transform: scale(1); filter: drop-shadow(0 0 2px rgba(59,130,246,0.5)); }} 100% {{ transform: scale(1.04); filter: drop-shadow(0 0 8px rgba(6,182,212,0.8)); }} }}
+            
+            .dev-name {{ background: linear-gradient(90deg, #3b82f6, #06b6d4, #8b5cf6, #3b82f6); -webkit-background-clip: text; color: transparent !important; background-size: 200% auto; font-weight: 900; font-size: 15px; letter-spacing: 0.8px; display: inline-block; cursor: pointer; animation: shine 3s linear infinite, devPulse 2s infinite alternate; padding-bottom: 2px; text-shadow: 0 2px 10px rgba(59,130,246,0.15); }}
+            @keyframes devPulse {{ 0% {{ transform: scale(1); filter: drop-shadow(0 0 2px rgba(59,130,246,0.3)); }} 100% {{ transform: scale(1.02); filter: drop-shadow(0 0 10px rgba(6,182,212,0.6)); }} }}
             
             /* --- RESPONSIVE FIXES LOCKED --- */
             @media (max-width: 1024px) {{
-                .animated-footer {{ justify-content: center !important; border-radius: 25px !important; gap: 15px; }}
+                .animated-footer {{ justify-content: center !important; border-radius: 35px !important; gap: 15px; padding: 18px 25px !important; }}
             }}
 
             @media (max-width: 768px) {{
                 .header-flex-main {{ flex-direction: row !important; justify-content: space-between !important; }} 
-                .glow-text {{ font-size: 14px !important; letter-spacing: 1px !important; text-align: center !important; line-height: 1.2 !important; margin-bottom: 2px !important; }} 
-                .powered-by-reverted {{ display: block !important; font-size: 8.5px !important; letter-spacing: 1.5px !important; margin-top: 0px !important; text-align: center !important; }}
-                .college-header-info {{ display: none !important; }} 
-                .cyber-header {{ padding: 12px 8px !important; }} 
-                .header-left-col {{ flex: 0 0 auto !important; padding-left: 2px !important; justify-content: flex-start !important; }}
-                .header-center-col {{ flex: 1 !important; padding: 0 5px !important; justify-content: center !important; gap: 0 !important; }}
-                .header-right-col {{ flex: 0 0 auto !important; padding-right: 2px !important; justify-content: flex-end !important; }}
+                .glow-text {{ font-size: 14.5px !important; letter-spacing: 0.5px !important; text-align: center !important; line-height: 1.3 !important; margin-bottom: 2px !important; white-space: normal !important; width: 100% !important; }} 
+                .powered-by-reverted {{ display: block !important; font-size: 8px !important; letter-spacing: 1.5px !important; margin-top: 0px !important; text-align: center !important; width: 100% !important; }}
                 
-                .neural-core {{ width: 16px !important; height: 16px !important; margin: 0 !important; }}
-                .neural-core::before {{ width: 28px !important; height: 28px !important; }}
-                .neural-core::after {{ width: 38px !important; height: 38px !important; }}
+                .college-header-info {{ 
+                    display: inline-block !important; 
+                    font-size: 7px !important; 
+                    letter-spacing: 0.5px !important; 
+                    margin-top: 8px !important; 
+                    padding: 4px 10px !important; 
+                    background: {college_badge_bg} !important; 
+                    border-radius: 20px !important; 
+                    border: 1px solid {college_badge_border} !important; 
+                    color: {college_text_color} !important;
+                    font-weight: 700 !important;
+                    white-space: nowrap !important;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+                }}
                 
-                .graph-container {{ height: 25px !important; gap: 3px !important; padding: 0 !important; }}
-                .bar {{ width: 4px !important; border-radius: 2px !important; }}
-                @keyframes equalize {{ 0% {{ height: 4px; }} 100% {{ height: 25px; }} }}
+                .cyber-header {{ padding: 18px 12px !important; border-radius: 18px !important; }} 
+                .header-left-col {{ flex: 0 0 65px !important; padding-left: 6px !important; justify-content: flex-start !important; align-items: center !important; overflow: visible !important; }}
+                .header-center-col {{ flex: 1 !important; padding: 0 !important; justify-content: center !important; align-items: center !important; display: flex !important; flex-direction: column !important; }}
+                .header-right-col {{ flex: 0 0 65px !important; padding-right: 6px !important; justify-content: flex-end !important; align-items: center !important; overflow: visible !important; }}
+                
+                .neural-core {{ width: 18px !important; height: 18px !important; margin: 0 !important; margin-left: 5px !important; }}
+                .neural-core::before {{ width: 30px !important; height: 30px !important; }}
+                .neural-core::after {{ width: 40px !important; height: 40px !important; }}
+                
+                .graph-container {{ height: 26px !important; gap: 3.5px !important; padding: 0 !important; margin-right: 5px !important; }}
+                .bar {{ width: 4.5px !important; border-radius: 2px !important; }}
+                @keyframes equalize {{ 0% {{ height: 4px; }} 100% {{ height: 26px; }} }}
 
                 div.stButton > button {{ padding: 0 5px !important; font-size: 12px !important; }}
                 div[data-testid="stHorizontalBlock"]:first-of-type {{ display: flex !important; flex-wrap: wrap !important; justify-content: space-between !important; }}
@@ -156,22 +273,33 @@ def inject_global_styles():
                 div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(3),
                 div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(4) {{ flex-basis: 48% !important; }} 
 
-                .animated-footer {{ flex-direction: column !important; border-radius: 20px !important; padding: 20px 15px !important; justify-content: center !important; text-align: center !important; gap: 12px !important; }}
+                .animated-footer {{ flex-direction: column !important; border-radius: 22px !important; padding: 22px 15px !important; justify-content: center !important; text-align: center !important; gap: 14px !important; }}
                 .footer-block {{ width: 100% !important; justify-content: center !important; }}
             }}
             
             @media (max-width: 480px) {{
+                .college-header-info {{ display: none !important; }}
+                .cyber-header {{ padding: 12px 10px !important; }}
+                .header-left-col {{ flex: 0 0 45px !important; padding-left: 2px !important; }}
+                .header-right-col {{ flex: 0 0 45px !important; padding-right: 2px !important; }}
+                .glow-text {{ font-size: 12.5px !important; line-height: 1.2 !important; }}
+                .neural-core {{ width: 15px !important; height: 15px !important; margin-left: 2px !important; }}
+                .neural-core::before {{ width: 26px !important; height: 26px !important; }}
+                .neural-core::after {{ width: 34px !important; height: 34px !important; }}
+                .graph-container {{ height: 22px !important; margin-right: 2px !important; }}
+                .bar {{ width: 3.5px !important; }}
+                @keyframes equalize {{ 0% {{ height: 4px; }} 100% {{ height: 22px; }} }}
+                
                 div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(3),
                 div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(4) {{ flex-basis: 48% !important; }} 
                 div.stButton > button {{ font-size: 11px !important; padding: 0 5px !important; height: 40px !important; }}
                 .secure-badge-static, .welcome-badge {{ font-size: 12px !important; height: 40px !important; }}
-                
                 .footer-block {{ font-size: 11.5px !important; gap: 4px !important; line-height: 1.6 !important; }}
                 .dev-name {{ font-size: 12.5px !important; }}
                 .anim-core svg {{ width: 16px; height: 16px; }}
             }}
 
-            /* --- STREAMLIT BRANDING NUKE (MASLA 2 FIX) --- */
+            /* --- STREAMLIT BRANDING NUKE --- */
             header[data-testid="stHeader"] {{ display: none !important; }}
             footer {{ display: none !important; }}
             [data-testid="stDecoration"] {{ display: none !important; }}
