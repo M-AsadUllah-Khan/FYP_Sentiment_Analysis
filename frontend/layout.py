@@ -14,8 +14,6 @@ def inject_global_styles():
     card_bg = "rgba(30, 41, 59, 0.85)" if is_dark else "rgba(255, 255, 255, 0.95)"
     border = "rgba(59, 130, 246, 0.5)"
 
-    # --- DYNAMIC THEME VARIABLES FOR ULTRA PREMIUM HEADER & FOOTER ---
-    
     # Header Variables
     header_bg = (
         "linear-gradient(145deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.75) 50%, rgba(15, 23, 42, 0.85) 100%)"
@@ -87,7 +85,7 @@ def inject_global_styles():
             .secure-badge-static, .welcome-badge {{ height: 45px !important; display: flex !important; align-items: center !important; justify-content: center !important; margin-top: 0px !important; box-sizing: border-box !important; }}
 
             /* ========================================================= */
-            /* --- ULTRA PRO MAX CYBER HEADER (PIXEL PERFECT) --- */
+            /* --- HEADER --- */
             /* ========================================================= */
             .cyber-header {{ 
                 background: {header_bg} !important;
@@ -119,7 +117,6 @@ def inject_global_styles():
             .header-center-col {{ flex: 4; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 0px !important; }}
             .header-right-col {{ flex: 1; display: flex; justify-content: flex-end; align-items: center; padding-right: 15px; }}
             
-            /* CLIPPING BUG FIX ENFORCED */
             .glow-text {{ 
                 font-family: 'Segoe UI', system-ui, sans-serif; 
                 font-weight: 900; 
@@ -180,7 +177,7 @@ def inject_global_styles():
             @keyframes equalize {{ 0% {{ height: 8px; }} 100% {{ height: 45px; }} }}
             
             /* ========================================================= */
-            /* --- ULTRA PRO MAX FLOATING DOCK FOOTER --- */
+            /* --- FOOTER --- */
             /* ========================================================= */
             
             .footer-block {{ display: flex; align-items: center; justify-content: center; flex-wrap: wrap; color: {footer_text_color}; font-size: 13.5px; font-weight: 600; opacity: 0.95; gap: 6px; text-align: center; line-height: 1.5; letter-spacing: 0.3px; }}
@@ -227,7 +224,7 @@ def inject_global_styles():
             .dev-name {{ background: linear-gradient(90deg, #3b82f6, #06b6d4, #8b5cf6, #3b82f6); -webkit-background-clip: text; color: transparent !important; background-size: 200% auto; font-weight: 900; font-size: 15px; letter-spacing: 0.8px; display: inline-block; cursor: pointer; animation: shine 3s linear infinite, devPulse 2s infinite alternate; padding-bottom: 2px; text-shadow: 0 2px 10px rgba(59,130,246,0.15); }}
             @keyframes devPulse {{ 0% {{ transform: scale(1); filter: drop-shadow(0 0 2px rgba(59,130,246,0.3)); }} 100% {{ transform: scale(1.02); filter: drop-shadow(0 0 10px rgba(6,182,212,0.6)); }} }}
             
-            /* --- RESPONSIVE FIXES LOCKED --- */
+            /* --- RESPONSIVE --- */
             @media (max-width: 1024px) {{
                 .animated-footer {{ justify-content: center !important; border-radius: 35px !important; gap: 15px; padding: 18px 25px !important; }}
             }}
@@ -309,7 +306,26 @@ def inject_global_styles():
             .viewerBadge_link__1S137 {{ display: none !important; visibility: hidden !important; }}
             div[class^="st-emotion-cache-"] > a {{ display: none !important; }}
             #MainMenu {{ visibility: hidden !important; }}
-
+            /* --- PERMANENTLY NUKE STREAMLIT CLOUD BRANDING --- */
+            header[data-testid="stHeader"] { display: none !important; }
+            footer { display: none !important; }
+            
+            /* Target all known variations of bottom-right floating badges */
+            div[data-testid="stToolbar"],
+            div[data-testid="manage-app-button"],
+            div[data-testid="stAppDeployButton"],
+            div[class*="viewerBadge"],
+            div[class*="stAppDeployButton"],
+            button[title="Manage app"],
+            .stDeployButton,
+            #MainMenu {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                pointer-events: none !important;
+                position: absolute !important;
+                z-index: -9999 !important;
+            }
             div.block-container {{ padding-top: 2.5rem !important; padding-bottom: 0px !important; }}
         </style>
     """,

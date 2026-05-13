@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, EmailStr
-import psycopg2  # Changed from sqlite3
+import psycopg2 
 import time
 import random
 import re
@@ -16,13 +16,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# YAHAN APNA NEON DB KA URL PASTE KAREIN
-DB_URL = "postgresql://user:password@ep-host.neon.tech/neondb"
+DB_URL = "postgresql://neondb_owner:npg_Gh9ASTp0QUzB@ep-plain-water-aohw9oyz.c-2.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require"
 
 def init_db():
     conn = psycopg2.connect(DB_URL)
     cursor = conn.cursor()
-    # AUTOINCREMENT ki jagah SERIAL use kiya gaya hai
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,

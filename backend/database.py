@@ -1,13 +1,23 @@
 import psycopg2
 import datetime
+import urllib.parse
 
-# YAHAN APNA NEON DB KA URL PASTE KAREIN
-DB_URL = "postgresql://user:password@ep-host.neon.tech/neondb"
+DB_URL = "postgresql://neondb_owner:npg_Gh9ASTp0QUzB@ep-plain-water-aohw9oyz.c-2.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require"
+url = urllib.parse.urlparse(DB_URL)
+
+def get_connection():
+    return psycopg2.connect(
+        database=url.path[1:],
+        user=url.username,
+        password=url.password,
+        host=url.hostname,
+        port=url.port if url.port else 5432,
+        sslmode='require'
+    )
 
 def init_db():
-    conn = psycopg2.connect(DB_URL)
+    conn = get_connection()
     c = conn.cursor()
-    # AUTOINCREMENT ki jagah SERIAL
     c.execute('''CREATE TABLE IF NOT EXISTS system_logs 
                  (id SERIAL PRIMARY KEY, 
                   timestamp TEXT, 
@@ -18,17 +28,16 @@ def init_db():
     conn.close()
 
 def save_analysis(text, polarity, sentiment):
-    conn = psycopg2.connect(DB_URL)
+    conn = get_connection()
     c = conn.cursor()
     time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # ? ki jagah %s 
     c.execute("INSERT INTO system_logs (timestamp, review_text, polarity, sentiment) VALUES (%s, %s, %s, %s)", 
               (time_now, text, polarity, sentiment))
     conn.commit()
     conn.close()
 
 def get_all_logs():
-    conn = psycopg2.connect(DB_URL)
+    conn = get_connection()
     c = conn.cursor()
     c.execute("SELECT * FROM system_logs ORDER BY timestamp DESC")
     rows = c.fetchall()

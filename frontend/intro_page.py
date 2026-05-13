@@ -136,8 +136,8 @@ def render_intro_page():
         img_relative_path = os.path.join("assets", "images", "asad.jpeg")
         
         # Test paths
-        img_abs_path1 = os.path.join(base_dir, img_relative_path) # frontend/assets... (incorrect structure based on screenshot but test)
-        img_abs_path2 = os.path.join(project_root, img_relative_path) # assets/images/asad.jpeg (correct based on screenshot)
+        img_abs_path1 = os.path.join(base_dir, img_relative_path) 
+        img_abs_path2 = os.path.join(project_root, img_relative_path) #
 
         # Main dynamic loader with fallbacks
         encoded_string = None
