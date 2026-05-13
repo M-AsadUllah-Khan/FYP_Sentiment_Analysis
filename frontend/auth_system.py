@@ -4,16 +4,17 @@ import time
 import re
 import random
 import smtplib
+import os 
 from email.mime.text import MIMEText
 from layout import render_header, render_footer
 
-SENDER_EMAIL = st.secrets.get("SENDER_EMAIL", "asaddevpk@gmail.com")
-APP_PASSWORD = st.secrets.get("APP_PASSWORD", "flki fpyc havy kalx")
-
-DB_URL = "postgresql://neondb_owner:npg_Gh9ASTp0QUzB@ep-plain-water-aohw9oyz.c-2.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require"
+DB_URL = os.environ.get("DB_URL")
+SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
+APP_PASSWORD = os.environ.get("APP_PASSWORD")
 
 def get_db_connection():
     return psycopg2.connect(DB_URL)
+
 
 @st.cache_resource
 def init_db():
