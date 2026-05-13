@@ -10,17 +10,11 @@ from layout import render_header, render_footer
 SENDER_EMAIL = st.secrets.get("SENDER_EMAIL", "asaddevpk@gmail.com")
 APP_PASSWORD = st.secrets.get("APP_PASSWORD", "flki fpyc havy kalx")
 
-def get_db_connection():
-    return psycopg2.connect(
-        host="ep-plain-water-aohw9oyz.c-2.ap-southeast-1.aws.neon.tech",
-        port=5432,
-        database="neondb",
-        user="neondb_owner",
-        password="npg_Gh9ASTp0QUzB",
-        sslmode="require"
-    )
+DB_URL = "postgresql://neondb_owner:npg_Gh9ASTp0QUzB@ep-plain-water-aohw9oyz.c-2.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require"
 
-# SPEED OPTIMIZATION
+def get_db_connection():
+    return psycopg2.connect(DB_URL)
+
 @st.cache_resource
 def init_db():
     try:
@@ -75,13 +69,10 @@ def render_auth_ui():
         st.session_state['page'] = 'dashboard'
         st.rerun()
 
-    # Registration OTP States
     if 'otp_step' not in st.session_state: st.session_state['otp_step'] = False
     if 'temp_user_data' not in st.session_state: st.session_state['temp_user_data'] = None
     if 'generated_otp' not in st.session_state: st.session_state['generated_otp'] = None
-    
-    # Recovery OTP States
-    if 'rec_step' not in st.session_state: st.session_state['rec_step'] = 'start' # start, otp, reset
+    if 'rec_step' not in st.session_state: st.session_state['rec_step'] = 'start'
     if 'rec_email' not in st.session_state: st.session_state['rec_email'] = None
     if 'rec_otp' not in st.session_state: st.session_state['rec_otp'] = None
 
@@ -95,9 +86,6 @@ def render_auth_ui():
         
         t1, t2, t3 = st.tabs(["🔑 Login", "📝 Register", "🔄 Recover"])
 
-        # ==========================================
-        # TAB 1: LOGIN FLOW
-        # ==========================================
         with t1:
             with st.form("login_form"):
                 email_login = st.text_input("Email *")
@@ -126,9 +114,6 @@ def render_auth_ui():
                         except Exception as e:
                             st.error(f"Login Error: {e}")
 
-        # ==========================================
-        # TAB 2: REGISTER FLOW
-        # ==========================================
         with t2:
             if not st.session_state['otp_step']:
                 with st.form("register_form"):
@@ -205,9 +190,6 @@ def render_auth_ui():
                         st.session_state['generated_otp'] = None
                         st.rerun()
 
-        # ==========================================
-        # TAB 3: RECOVER ACCOUNT FLOW
-        # ==========================================
         with t3:
             st.markdown("<h4 style='text-align: center; margin-bottom: 15px;'>Account Recovery</h4>", unsafe_allow_html=True)
             
