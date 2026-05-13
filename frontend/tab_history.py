@@ -3,7 +3,7 @@ import psycopg2
 import pandas as pd
 
 def get_user_history(email):
-    conn = psycopg2.connect(st.secrets["DB_URL"])
+    conn = psycopg2.connect(st.secrets["DB_URL"] or os.environ["DB_URL"])
     
     query = 'SELECT review as "Review Text", sentiment as "Prediction", timestamp as "Date/Time" FROM history WHERE email=%s ORDER BY timestamp DESC'
     

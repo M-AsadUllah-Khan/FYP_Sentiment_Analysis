@@ -14,7 +14,7 @@ except ModuleNotFoundError:
 
 # --- DB FETCH LOGIC ---
 def get_user_usage(email):
-    conn = psycopg2.connect(st.secrets["DB_URL"])
+    conn = psycopg2.connect(st.secrets["DB_URL"] or os.environ["DB_URL"])
     c = conn.cursor()
     c.execute('SELECT total, positive, negative, neutral FROM usage WHERE email=%s', (email,))
     data = c.fetchone()
